@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "folder": "v100",
+  "updated_at": "2026-08-07T22:44:00+08:00",
+  "trip_start": "2026-08-19",
+  "trip_end": "2026-08-26",
+  "status": "reviewed-static-release",
+  "notes": [
+    "Locked-flight-first planning",
+    "Five independent route variants",
+    "No estimated dynamic prices",
+    "Inline direct source links"
+  ]
+}
