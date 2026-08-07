@@ -1,0 +1,138 @@
+,securityLevel:'loose'}})}}catch(e){{}}
+// cost calculator
+const PLANFIELDS={json.dumps({k:[x[0] for x in v] for k,v in plan_fields.items()})};
+const INCLUDE_YUYUAN={{A:true,B:true,C:true,D:true,E:false}};
+function getNum(el){{const v=parseFloat(el.value);return Number.isFinite(v)?v:null}}
+function fixedTicket(pid){{let a=Math.max(0,parseInt(document.getElementById('adultCount').value||0)),s=Math.max(0,parseInt(document.getElementById('seniorCount').value||0));let liu=a*122+s*31;let yu=INCLUDE_YUYUAN[pid]?(a*30+s*15):0;return liu+yu;}}
+function saveInputs(){{document.querySelectorAll('#costs input').forEach(el=>localStorage.setItem('tripcost:'+ (el.id||el.dataset.shared||el.dataset.plan+':'+el.dataset.field),el.value));}}
+function loadInputs(){{document.querySelectorAll('#costs input').forEach(el=>{{let k='tripcost:'+(el.id||el.dataset.shared||el.dataset.plan+':'+el.dataset.field),v=localStorage.getItem(k);if(v!==null)el.value=v;}})}}
+function calcCosts(){{saveInputs();let sharedEls=[...document.querySelectorAll('[data-shared]')];for(const pid of Object.keys(PLANFIELDS)){{let fixed=fixedTicket(pid),sum=fixed,missing=0;sharedEls.forEach(el=>{{let v=getNum(el);if(v===null)missing++;else sum+=v;}});document.querySelectorAll(`[data-plan="${{pid}}"]`).forEach(el=>{{let v=getNum(el);if(v===null)missing++;else sum+=v;}});let fixedText='¥'+fixed.toFixed(2);document.getElementById('fixed-'+pid).textContent=fixedText;document.getElementById('table-fixed-'+pid).textContent=fixedText;let total=document.getElementById('total-'+pid),miss=document.getElementById('missing-'+pid),tab=document.getElementById('table-total-'+pid);if(missing===0){{let t='¥'+sum.toFixed(2);total.textContent=t;miss.textContent='已全部使用真实金额';tab.textContent=t;}}else{{total.textContent='—';miss.textContent=`待补齐 ${{missing}} 项真实金额；已知部分 ¥${{sum.toFixed(2)}}`;tab.textContent=`待补${{missing}}项`}}}}}}
+loadInputs();document.querySelectorAll('#costs input').forEach(el=>el.addEventListener('input',calcCosts));calcCosts();
+// hash tab active
+function markTab(){{const h=location.hash||'#quick';document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===h));}}window.addEventListener('hashchange',markTab);markTab();
+</script></body></html>'''
+
+(V/'index.html').write_text(html_doc,encoding='utf-8')
+version={"version":"1.1.0","released_at":iso,"timezone":"UTC+8","path":"v110/","entry":"v110/index.html","previous":"v1.0.0","previous_released_at":"2026-08-07T22:44:00+08:00","notes":["按四城扩充50+景点点评与优先级","五方案总地图+每方案8天单日地图","抢票预约日历","逐餐与餐厅候选","精确成本台账与五方案结构对比","完整研究多层折叠目录","版本/时间戳对应管理"]}
+(V/'version.json').write_text(json.dumps(version,ensure_ascii=False,indent=2),encoding='utf-8')
+(ROOT/'version.json').write_text(json.dumps(version,ensure_ascii=False,indent=2),encoding='utf-8')
+(ROOT/'index.html').write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta http-equiv="refresh" content="0; url=./v110/#full"><title>北京—山东—上海家庭旅行计划 · v1.1.0</title></head><body><h1>正在打开 v1.1.0</h1><p>更新时间：{ts}</p><p><a href="./v110/#full">点击进入最新版完整研究</a></p><script>location.replace('./v110/?from=root&v=110#full');</script></body></html>''',encoding='utf-8')
+
+readme=f'''# 北京—山东—上海家庭旅行计划 · v1.1.0
+
+最后更新：{ts}
+
+## 项目定位
+
+2026-08-19 至 2026-08-26 的家庭旅行执行与研究手册。四段航班已锁定，因此核心是**固定航班倒推路线**，并在山东段保留自驾/不自驾分叉。
+
+## 最新版
+
+- 根目录自动跳转：`./v110/#full`
+- 最新页面：`v110/index.html`
+- 上一版：`v100/index.html`（保留，不覆盖）
+- 版本元数据：`version.json` / `v110/version.json`
+
+## v1.1.0 新增
+
+- 按北京 / 青岛 / 威海 / 上海扩充 50+ 景点池，包含不一定去的备选。
+- 5 套方案各自总路线地图；每套方案 8 天各自单日地图，共 45 张地图视图。
+- 真实比例尺 OpenStreetMap + 方向线 + 交通方式 + 关键时间节点；同时保留 Mermaid 宏观图。
+- 抢票/预约日历。
+- 每顿饭建议 + 四城餐厅候选。
+- 五方案精确成本台账：固定官方价自动计算，动态支出只接收真实支付额。
+- “完整研究”多层可折叠目录：季节天气、景点点评、住宿、饮食、交通、租车、成本、删减、模块、核心讨论、冲突裁决、来源。
+- 版本 ↔ 时间戳对应管理。
+
+## 价格原则
+
+固定官方价才写数字；酒店、租车、网约车、餐饮、尚未开售铁路和已购机票金额，在没有最终支付页/菜单/账单前不写估算金额。页面提供本地精确成本计算器。
+
+## 地图说明
+
+地图基于 OpenStreetMap，节点为规划级近似坐标，线段用于表达空间关系与移动方向，不替代实时导航。
+
+## 工程说明
+
+借鉴 `Shuhong-BNU/yunnan-family-trip` 的版本化静态发布、根目录入口、移动端阅读和“完整研究”折叠方式，但内容结构按本次固定航班旅行重新设计。
+'''
+(ROOT/'README.md').write_text(readme,encoding='utf-8')
+
+changelog=f'''# CHANGELOG
+
+## v1.1.0 — {ts}
+
+- 扩充四城 50+ 景点点评、优先级、暑期人流/商业化、预约/价格口径。
+- 新增 5 套方案总地图 + 40 张方案日地图。
+- 新增抢票预约日历。
+- 新增每顿饭建议、城市美食与餐厅候选。
+- 新增精确成本计算器和五方案成本结构比较。
+- 完整研究升级为多层折叠目录。
+- 新增版本与时间戳对应管理。
+
+## v1.0.0 — 2026-08-07 22:44 (UTC+8)
+
+- 首次完成 5 份输入方案去重。
+- 裁决刘公岛、天安门预约、一嗨异地费、铁路未开售票价、上海双机场等事实冲突。
+- 建立五方案骨架、基础完整研究和逐条来源链接。
+'''
+(ROOT/'CHANGELOG.md').write_text(changelog,encoding='utf-8')
+
+# decisions append new design decisions
+old_dec=(ROOT/'DECISIONS.md').read_text(encoding='utf-8') if (ROOT/'DECISIONS.md').exists() else '# 冲突裁决与版本决策\n'
+if 'v1.1.0' not in old_dec:
+    old_dec += f'''\n\n## v1.1.0 — {ts}\n\n- “景点池”与“实际行程”拆分：不去的景点也保留研究与删减理由。\n- 每个方案与每天都必须有地图；使用真实比例尺 OSM 底图，但明确规划线不是导航级道路轨迹。\n- 总成本与“禁止预估”冲突时，以禁止预估为更高约束：改成真实订单成本台账，缺项不显示伪完整总数。\n- 餐厅只作为候选，不写人均预估；菜系由官方城市餐饮指南支撑，门店位置用地图当日核对。\n- 上海博物馆人民广场馆旧预约口径更新：2026当前受特展票务安排影响，雨天优先东馆。\n'''
+(ROOT/'DECISIONS.md').write_text(old_dec,encoding='utf-8')
+
+# sources md
+lines=['# SOURCES','',f'版本：v1.1.0｜{ts}','', '页面中的外部事实已就地放置链接；本文件用于审计。','']
+for k,v in source_pairs:
+    lines.append(f'- **{k}**: {v}')
+(ROOT/'SOURCES.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+# deploy docs
+(ROOT/'DEPLOY.md').write_text(f'''# GitHub Pages 部署
+
+版本：v1.1.0｜{ts}
+
+## 推荐
+
+仓库使用普通静态 HTML，无构建依赖。
+
+1. GitHub 仓库 Settings → Pages。
+2. Source 选择 **Deploy from a branch**。
+3. Branch 选择 `main`，目录 `/ (root)`。
+4. 保存。
+5. 根目录 `index.html` 会自动跳到 `v110/#full`。
+
+目标地址：
+
+- `https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/`
+- `https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v110/#full`
+
+## 版本纪律
+
+- 不删除 `v100/`。
+- 下一版本新建 `vXYZ/`。
+- 仅更新根 `index.html` 和 `version.json` 指向最新版。
+''',encoding='utf-8')
+
+# .nojekyll
+(ROOT/'.nojekyll').write_text('',encoding='utf-8')
+
+# checksums of core release files
+core=['index.html','version.json','README.md','CHANGELOG.md','DECISIONS.md','SOURCES.md','DEPLOY.md','v100/index.html','v100/version.json','v110/index.html','v110/version.json']
+checks=[]
+for rel in core:
+    p=ROOT/rel
+    if p.exists(): checks.append(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {rel}')
+(ROOT/'SHA256SUMS.txt').write_text('\n'.join(checks)+'\n',encoding='utf-8')
+
+# zip
+zip_path=ROOT.parent/'beijing-shandong-shanghai-family-trip-v1.1.0.zip'
+with zipfile.ZipFile(zip_path,'w',zipfile.ZIP_DEFLATED) as z:
+    for p in ROOT.rglob('*'):
+        if p.is_file(): z.write(p,p.relative_to(ROOT.parent))
+print('built',V/'index.html', (V/'index.html').stat().st_size)
+print('timestamp',ts)
+print('zip',zip_path,zip_path.stat().st_size)
