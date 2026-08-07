@@ -1,0 +1,135 @@
+aily first/major nodes
+    allnodes=[]; allmodes=[]
+    last=None
+    for d in p['days']:
+        nodes=d[2]; modes=d[3]
+        for i,n in enumerate(nodes):
+            k=n[0]
+            if last!=k:
+                allnodes.append(n)
+                if last is not None:
+                    # segment mode: if internal day use previous local mode else flight/rail/taxi approximate
+                    m=modes[i-1] if i>0 and i-1 < len(modes) else 'taxi'
+                    allmodes.append(m)
+                last=k
+    mapdata[f'plan-{pid}']={'nodes':allnodes,'modes':allmodes,'plan':pid,'title':p['name']}
+    for di,d in enumerate(p['days'],1):
+        mapdata[f'{pid}-d{di}']={'nodes':d[2],'modes':d[3],'plan':pid,'title':f'{d[0]} {d[1]}'}
+
+# HTML helpers
+
+def map_box(mid,height=300):
+    return f'<div class="route-map" id="map-{mid}" data-mapkey="{mid}" style="height:{height}px"><div class="map-loading">地图进入视口后加载 · OpenStreetMap</div></div>'
+
+def plan_section(pid,p):
+    rows=[]
+    daydetails=[]
+    for i,d in enumerate(p['days'],1):
+        rows.append(f'<tr><td>Day {i}<br><b>{d[0]}</b></td><td><b>{d[1]}</b></td><td>{route_text(d)} {a("decision","↗ 路线依据")}</td></tr>')
+        daydetails.append(f'''<details class="daydetail"><summary>Day {i} · {d[0]} · {d[1]}｜展开当天路线图</summary>
+        <div class="route-summary">{route_text(d)}</div>
+        {map_box(f'{pid}-d{i}',270)}
+        <p class="note">地图节点为规划级近似坐标，连线用于表现空间关系、方向和交通方式，不替代当天高德/实时导航。{a('decision','↗ 路线取舍说明')}</p>
+        </details>''')
+    return f'''<article class="plan-card {'best' if pid=='A' else ''}" id="plan-{pid.lower()}">
+    <div class="plan-head"><span class="plan-badge">{p['badge']}</span><h3>{p['name']}</h3></div>
+    <div class="plan-meta"><b>城市晚数：</b>{p['stays']}｜<b>适合：</b>{p['fit']}｜<b>成本差异：</b>{p['cost_note']} {a('decision')}</div>
+    <h4>方案总路线图</h4>{map_box(f'plan-{pid}',360)}
+    <div class="table-wrap"><table><thead><tr><th>日期</th><th>当日所在城市</th><th>当天移动主线</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+    <div class="daymaps"><h4>每天单独路线图</h4>{''.join(daydetails)}</div>
+    </article>'''
+
+# attraction tables by city
+attraction_html=[]
+for city,rows in attractions.items():
+    trs=[]
+    for name,pri,dur,crowd,comm,ticket,comment,src in rows:
+        src_link=a(src,'↗ 事实/位置来源') if src in S else a(src,'↗ 来源')
+        trs.append(f'<tr><td><b>{name}</b></td><td><span class="prio p{pri[0]}">{pri}</span></td><td>{dur}</td><td>{crowd}</td><td>{comm}</td><td>{ticket} {src_link}</td><td>{comment} {a("decision")}</td></tr>')
+    attraction_html.append(f'''<h3>{city}｜景点池（不等于都去）</h3><div class="table-wrap"><table class="attr"><thead><tr><th>景点/活动</th><th>优先级</th><th>建议耗时</th><th>暑期人流</th><th>商业化</th><th>预约/票价口径</th><th>这次怎么判断</th></tr></thead><tbody>{''.join(trs)}</tbody></table></div>''')
+
+# meal HTML
+meal_trs=[]
+for citydate,meal,suggest,where,src in meals:
+    meal_trs.append(f'<tr><td>{citydate}</td><td><b>{meal}</b></td><td>{suggest} {a(src,"↗ 食物/规则来源")}</td><td>{where} {a("price_method","↗ 菜单价方法")}</td></tr>')
+restaurant_html=[]
+for city,rows in restaurants.items():
+    li=[]
+    for n,c,src in rows:
+        q=n.split('等')[0].split('/')[0]
+        li.append(f'<li><b>{n}</b>：{c} {a(src,"↗ 官方餐饮指南")} {amap(q)}</li>')
+    restaurant_html.append(f'<h4>{city}</h4><ul>{"".join(li)}</ul>')
+
+# booking HTML
+book_trs=[]
+for when,item,channel,rule,pri,src in booking:
+    book_trs.append(f'<tr><td><b>{when}</b></td><td>{item}</td><td>{channel}</td><td>{rule} {a(src,"↗ 来源")}</td><td><span class="prio p{pri[0]}">{pri}</span></td></tr>')
+
+# full cost cards, dynamic calculator fields
+cost_categories=[
+('flight','已订四段航班订单总额','共同'),('bj_hotel','北京8/19酒店','共同'),('sh_hotel','上海8/24+8/25酒店','共同'),('bj_local','北京小交通','共同'),('sh_local','上海小交通','共同'),('bj_sh_food','北京+上海餐饮实际账单','共同'),
+]
+plan_fields={
+'A':[('qd_hotel','青岛2晚酒店'),('wh_hotel','威海2晚酒店'),('rail','8/22青岛→威海铁路'),('sd_local','山东非租车小交通'),('rental','8/24威海租车最终支付额'),('energy','8/24能源+停车+高速'),('sd_food','青岛+威海餐饮实际账单'),('dynamic_ticket','其他实际购买门票/项目')],
+'B':[('qd_hotel','青岛2晚酒店'),('wh_hotel','威海2晚酒店'),('rail','8/22青岛→威海铁路'),('sd_local','山东全部小交通'),('sd_food','青岛+威海餐饮实际账单'),('dynamic_ticket','其他实际购买门票/项目')],
+'C':[('qd_hotel','青岛3晚酒店'),('wh_hotel','威海1晚酒店'),('rail','8/23青岛→威海铁路'),('sd_local','山东小交通'),('sd_food','青岛+威海餐饮实际账单'),('dynamic_ticket','崂山+其他实际购买门票/项目')],
+'D':[('qd_hotel','青岛2晚酒店'),('wh_hotel','威海2晚酒店'),('rental','8/22–8/24租车最终支付额'),('energy','油/电+停车+高速'),('sd_local','山东其他小交通'),('sd_food','青岛+威海餐饮实际账单'),('dynamic_ticket','崂山/成山头等实际购买门票/项目')],
+'E':[('qd_hotel','青岛2晚酒店'),('wh_hotel','威海2晚酒店'),('rail','8/22青岛→威海铁路'),('sd_local','山东小交通'),('sd_food','青岛+威海餐饮实际账单'),('dynamic_ticket','其他实际购买门票/项目')],
+}
+# Exact fixed ticket rows: Plan includes Liu Gong; A/B/C/D include Yuyuan, E doesn't. Seniors calculated JS.
+fixed_note={'A':'刘公岛 + 豫园','B':'刘公岛 + 豫园','C':'刘公岛 + 豫园（崂山另按实际线路票价输入）','D':'刘公岛 + 豫园（崂山/成山头按实际购票输入）','E':'刘公岛（上海默认只走免费外滩）'}
+
+shared_inputs=''.join(f'<label>{label}<input type="number" min="0" step="0.01" data-shared="{k}" placeholder="填真实支付金额"></label>' for k,label,_ in cost_categories)
+plan_cost_cards=[]
+for pid in plans:
+    inputs=''.join(f'<label>{label}<input type="number" min="0" step="0.01" data-plan="{pid}" data-field="{k}" placeholder="真实金额"></label>' for k,label in plan_fields[pid])
+    plan_cost_cards.append(f'''<div class="cost-card" data-costcard="{pid}"><h4>{plans[pid]['name']}</h4>
+    <div class="fixed-ticket"><b>默认固定票务：</b>{fixed_note[pid]}｜<span id="fixed-{pid}">由人数/年龄计算</span></div>
+    <div class="input-grid">{inputs}</div>
+    <div class="cost-total">完整总成本：<strong id="total-{pid}">—</strong><small id="missing-{pid}">待补齐真实订单</small></div></div>''')
+
+# key discussions
+core_discussions=[
+('第一次北京，天安门是不是必须？','是，至少把“天安门广场/城楼所在中轴线”保留为S级；但“去天安门”不等于必须同日进故宫。北京只剩8/20一个白天，北师大又是硬约束。','tiananmen'),
+('故宫为什么默认删？','不是因为不值得，而是它正常需要3–5小时，还要预约、安检和大量步行；硬塞会把北京变成赶场。若父母明确“非故宫不可”，用故宫替换其他北京轻项目，而不是叠加。','palace'),
+('青岛2晚还是3晚？','两者都成立。青2威2更符合“父母放松+威海海岸”；青3威1只在崂山优先级高时成立，所以保留独立方案C。','decision'),
+('为什么青岛市区不租车、威海只租一天？','青岛经典点集中在老城/海岸/地铁沿线，车会引入停车；威海环海路/荣成则距离拉开，单日车的边际价值最高。','decision'),
+('刘公岛为什么锁定？','它有明确历史主题、2026官方固定票价，而且和青岛/上海的城市景观不重复；是威海最有辨识度的一天。','liugong'),
+('火炬八街/那香海要不要追？','火炬八街网红拥挤，清晨顺路看即可；那香海更舒服但商业度高，适合自驾半日模块，不要和成山头、动物园全叠。','wh_crowd_2026'),
+('东方明珠还是上海中心？','二选一即可。东方明珠“地标感”更强，上海中心“高度/现代城市视角”更强；能见度不好两个都删，免费外滩更值。','oriental_pearl_2026'),
+('为什么成本不给一个看似完整的数字？','四段机票购买价、酒店、租车、网约车和餐饮都未提供最终订单/账单。为了满足“不要预估”，只能给官方固定票价+可填写真实支付额的精确台账。填完后页面自动给五方案完整总数。','price_method'),
+('3人/4人秦PLUS够不够？','3人+中等行李通常合适；4人本身能坐，但若4人各带中大型箱，后备厢才是瓶颈，优先升级SUV并现场试装。','qinplus'),
+('纯电/油车/DM-i怎么选？','不能只看每公里电费。总成本=最终租金+保障+还车费用+停车高速+能源；若租价接近，DM-i这类插混通常最省执行心智，且一嗨当前规则对混动/插混/增程还车只判断油量。','ehi_rules'),
+('8/26送爸妈后怎么去浦东？','从虹桥T2直接走市域机场线去浦东，不返回市区；官方全程票价26元、两机场约40分钟通达。','airportline_fare'),
+]
+core_html=''.join(f'<details class="qa"><summary>{q}</summary><p>{ans} {a(src,"↗ 依据")}</p></details>' for q,ans,src in core_discussions)
+
+# cut list
+cuts=[
+('北京','故宫','默认删；若父母明确想去，替换什刹海/景山等，不与北师大+天安门叠加','palace'),
+('北京','颐和园/长城/天坛/国博','都值得，但本次只有一个白天，属于“下次北京”的完整半日/整日模块','decision'),
+('青岛','崂山','主推A删；仅方案C/D保留，避免把青岛唯一完整日变成山岳特种兵','laoshan_2026'),
+('青岛','小麦岛/石老人','与威海海岸体验重复，时间有限时删','qd_route'),
+('威海','火炬八街','只清晨顺路，不为拍照排队','wh_crowd_2026'),
+('威海','成山头','主推A默认不强制；只在驾驶方案D或天气/体力很好时加','decision'),
+('威海','神雕山动物园/鸡鸣岛','占用半天以上、与本次成人家庭核心目的不匹配','decision'),
+('上海','迪士尼/朱家角','整天/远郊，与1.5天上海和双机场收尾不匹配','decision'),
+('上海','东方明珠+上海中心同时上','功能高度重复，二选一；天气差都删','shtower'),
+('上海','人民广场上博馆默认行程','2026当前票务受特展安排影响，雨天优先东馆','shmuseum_2026'),
+]
+cut_tr=''.join(f'<tr><td>{c}</td><td><b>{n}</b></td><td>{r} {a(s,"↗ 依据")}</td></tr>' for c,n,r,s in cuts)
+
+# modular options
+modules=[
+('北京核心模块','北师大 + 天安门广场','任何方案都不删','BNU','Tiananmen'),
+('北京政治建筑模块','毛主席纪念堂 / 城楼 / 人民大会堂三选一','只有父母明确兴趣才加；不要三件全塞','Mao','Rostrum'),
+('青岛老城模块','海军博物馆 + 栈桥 + 中山路 + 信号山/小鱼山二选一','8/21上午–中午','Navy','OldCity'),
+('青岛海湾模块','八大关 + 五四广场 + 奥帆','8/21下午–晚','Badaguan','Olympic'),
+('崂山模块','崂山单独占半天/整天','只给方案C/D','Laoshan','Laoshan'),
+('威海历史模块','刘公岛','S级，尽量固定','LiugongDock','Liugong'),
+('威海海岸模块','海源/半月湾/威海公园按当天体力挑1–2个','免费、随时退出','Haiyuan','WHpark'),
+('威海自驾模块','火炬八街（清晨）→猫头山→那香海；成山头按体力选','主推A的8/24；路线只东行','Torch8','Naxianghai'),
+('上海经典模块','豫园→外滩→陆家嘴','8/25下午–晚；高楼二选一','Yuyuan','Pearl'),
+('上海雨天模块','上海博物馆东馆→外滩视雨势','高温雷雨替换户外','SHMuseumEast','Bund'),
+]
+module_tr=''.join(f'<tr><td><b>{n}</b></td><td>{c}</td><td>{use} {amap(L[a1][0],"↗ 起点")} {amap(L[a2][0],"↗ 终点")}</td></tr>' for n,c,use,a1,a2 in modules)
