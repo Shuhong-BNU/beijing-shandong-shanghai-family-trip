@@ -1,0 +1,53 @@
+Fang SC",sans-serif}.leaflet-popup-content{min-width:160px}.mermaid-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.checklist{columns:2;column-gap:20px}.checklist li{break-inside:avoid;margin:5px 0}.attr td:nth-child(1){min-width:120px}.attr td:nth-child(6){min-width:210px}.attr td:nth-child(7){min-width:260px}
+@media(max-width:800px){body{font-size:15px}.app{padding:10px 10px 80px}.hero{border-radius:18px;padding:19px 16px}.hero h1{font-size:23px}.grid2,.grid3,.version-grid,.cost-controls{grid-template-columns:1fr}.input-grid{grid-template-columns:1fr}.checklist{columns:1}.tabs a{font-size:12px}.plan-card,.card{padding:13px}details.section>.inside{padding:2px 12px 14px}.route-map{height:260px!important}}
+'''
+
+# build HTML body
+plans_html=''.join(plan_section(pid,p) for pid,p in plans.items())
+
+source_pairs=[(k,v) for k,v in S.items() if not v.startswith('#') and k!='amap']
+source_tr=''.join(f'<tr><td><code>{k}</code></td><td><a href="{html.escape(v,quote=True)}" target="_blank" rel="noopener">{html.escape(v)}</a></td></tr>' for k,v in source_pairs)
+
+html_doc=f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#5b3ea6"><meta name="robots" content="noindex,nofollow,noarchive"><title>北京—山东—上海家庭旅行计划 v1.1.0</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""><style>{css}</style></head><body><div class="app">
+<header class="hero"><div class="kicker" style="color:#fff">2026-08-19 → 2026-08-26 · 固定航班倒推型家庭行程</div><h1>北京—青岛—威海—上海家庭旅行计划</h1><p>女友 + 爸妈（默认3人，小概率4人）｜北师大 + 天安门硬约束｜山东自驾/不自驾双轨｜每条外部事实就地挂来源</p><div class="chips"><span class="chip">v1.1.0</span><span class="chip">五套方案</span><span class="chip">5个方案总图 + 40个日地图</span><span class="chip">精确成本台账</span><span class="chip">完整研究可折叠</span></div><div class="release-status"><span>最后校对：<b>{ts}</b></span><span>前版：v1.0.0 · 2026-08-07 22:44</span><span>最新入口：<b>/v110/#full</b></span></div></header>
+<nav class="tabs"><a href="#quick">先看结论</a><a href="#plans">五方案+地图</a><a href="#full">完整研究</a></nav>
+
+<section id="quick" class="panel">
+<h2>先看结论</h2>
+<div class="card best"><div class="kicker">当前主推</div><div class="big">A：青岛2晚 + 威海2晚 + 威海单日自驾</div><p>北京只做北师大 + 天安门；青岛市区不租车；8/22铁路转威海；8/23刘公岛；8/24再租一辆秦PLUS/同级车走威海海岸，机场还车；上海8/25经典慢游，8/26虹桥送爸妈后女友走市域机场线去浦东。{a('decision')}</p></div>
+<div class="grid2"><div class="card"><h3>四段航班已锁定</h3><ul><li>8/19 赣州→北京首都，23:40到。{a('input')}</li><li>8/20 北京首都20:20→青岛胶东21:45。{a('input')}</li><li>8/24 威海22:55→上海浦东，8/25 00:45到。{a('input')}</li><li>8/26 父母虹桥18:20→赣州；女友浦东22:05→广州。{a('input')}</li></ul></div><div class="card"><h3>这版最大的变化</h3><ul><li>景点池按北京/青岛/威海/上海扩到50+项，即使不去也点评。</li><li>五方案各有总地图，每个方案8天各有单独地图。</li><li>新增抢票日历、逐餐建议、餐厅候选。</li><li>新增“真实订单成本台账”，避免假预算。</li><li>完整研究改为多层折叠目录，结构借鉴云南版但按固定航班重做。 {a('yunnan','↗ 云南版参考')}</li></ul></div></div>
+<div class="card"><h3>宏观行程图</h3><div class="mermaid-wrap"><pre class="mermaid">flowchart LR
+G[8/19 赣州] -->|✈ 已订| B[北京\n1晚+1白天]
+B -->|8/20 20:20 ✈| Q[青岛\n2晚 / 方案C为3晚]
+Q -->|🚄 或 🚗| W[威海\n2晚 / 方案C为1晚]
+W -->|8/24 22:55 ✈| S[上海\n2晚]
+S --> H[8/26 虹桥\n爸妈→赣州]
+H -->|市域机场线 26元| P[浦东\n女友→广州]</pre></div></div>
+<div class="card"><h3>五方案一页比较</h3><div class="table-wrap"><table><thead><tr><th>方案</th><th>定位</th><th>城市晚数</th><th>适合谁</th><th>成本差异</th></tr></thead><tbody>{plan_rows}</tbody></table></div></div>
+<div class="card"><h3>价格纪律</h3><p><b>固定官方价写数字，动态商品不写“约”。</b>酒店、租车、网约车、餐饮、尚未开售的铁路、已购机票金额，都必须以真实支付页/账单补齐；因此下面的“总成本”做成可填写的精确台账，而不是虚构一个完整预算。{a('price_method','↗ 方法')}</p></div>
+</section>
+
+<section id="plans" class="panel"><h2>五套方案 + 每方案总路线图 + 每天路线图</h2><div class="alert">地图使用真实比例尺的 OpenStreetMap 底图；节点经纬度用于规划级空间关系，线段表达移动方向和交通方式，并非导航级道路轨迹。执行当天仍以高德/铁路/航班实时信息为准。 {a('decision')}</div><div class="legend"><span>✈ 飞机</span><span>🚄 铁路</span><span>🚗 自驾</span><span>🚕 打车</span><span>🚇 地铁</span><span>⛴ 轮渡</span><span>🚆 市域机场线</span><span>🚶 步行</span></div>{plans_html}</section>
+
+<section id="full" class="panel"><h2>完整研究</h2>
+<details class="toc" open><summary><b>可折叠目录</b></summary><div><a href="#requirements">需求全景</a><a href="#weather">季节天气</a><a href="#attractions">景点池</a><a href="#lodging">住宿地段</a><a href="#food">逐餐+餐厅</a><a href="#transport">交通</a><a href="#rental">租车</a><a href="#booking">抢票清单</a><a href="#costs">总成本</a><a href="#cuts">景点删减</a><a href="#modules">模块化方案</a><a href="#core-discussions">核心讨论</a><a href="#method">方法/冲突裁决</a><a href="#versions">版本管理</a><a href="#sources">来源总表</a></div></details>
+
+<details class="section" open id="requirements"><summary>01｜需求全景</summary><div class="inside"><p>本版以下15条为唯一需求基线；后续路线判断都不能反过来改动已锁定航班。</p><ol class="checklist">{req_li}</ol></div></details>
+
+<details class="section" open id="weather"><summary>02｜季节天气、暑期客流与商业化</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>城市</th><th>季节/临近天气关注</th><th>执行对策</th></tr></thead><tbody>{weather_tr}</tbody></table></div><div class="grid2"><div class="card"><h4>暑期人流</h4><p><b>北京：</b>天安门/故宫/国博仍属于暑期高预约压力区，按预约时间倒推，不临时叠景点。{a('tiananmen')}</p><p><b>青岛：</b>8/20到达时2026啤酒节已于8/15结束，但仍处暑期海滨旺季；老城、五四广场、海军博物馆需要错峰。{a('beerfest')}</p><p><b>威海：</b>火炬八街和国际海水浴场在节假日/暑期可出现非常高客流，主推只在清晨顺路。{a('wh_crowd_2026')}</p><p><b>上海：</b>大城市客流分散但暑期总量仍高；把外滩放偏晚，把博物馆作为高温/雷雨替代。{a('sh_crowd')}</p></div><div class="card"><h4>商业化怎么理解</h4><p>商业化星级是<b>本项目的规划判断</b>：衡量餐饮零售、网红拍照、收费项目和客流是否容易盖过景观本身；它不是官方评级。{a('decision')}</p><p>因此“商业化高”不等于“不值得”，例如东方明珠、那香海仍可能非常适合第一次旅行的父母；关键是别把一整天都排成高商业化排队点。</p></div></div></div></details>
+
+<details class="section" open id="attractions"><summary>03｜四城景点点评 + 优先级（50+项）</summary><div class="inside"><p class="note">S=本次尽量锁定；A=非常值得但受路线/体力影响；B=兴趣替换；C=本次大概率删。人流/商业化星级是规划层判断，票务/开放等事实都就地挂外部来源。</p>{''.join(attraction_html)}</div></details>
+
+<details class="section" id="lodging"><summary>04｜住宿地段：按路线选区，不拿搜索页价格冒充订单价</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>城市</th><th>主推地段</th><th>为什么</th><th>哪些方案不同</th><th>价格口径</th></tr></thead><tbody>
+<tr><td>北京</td><td><b>北邮南门/北太平庄</b></td><td>用户已锁定；距北师大近，减少8/20早晨横穿北京。 {a('input')}</td><td>全部方案相同</td><td>8/19入住、8/20退房；最终订单金额填成本台账。 {a('price_method')}</td></tr>
+<tr><td>青岛</td><td><b>五四广场/香港中路</b></td><td>地铁、餐饮、晚间散步都稳，爸妈第一次出门更适合成熟配套。 {a('decision')}</td><td>方案C若特别重老城，可改栈桥/中山路</td><td>按2晚或3晚真实订单填写。 {a('price_method')}</td></tr>
+<tr><td>威海</td><td><b>环翠区/幸福门/威高附近</b></td><td>刘公岛码头、市区海岸、餐饮都更顺；主推8/24才取车。 {a('decision')}</td><td>全部方案可用；若只想沙滩可改国际海水浴场，但去刘公岛更折返</td><td>按2晚或1晚真实订单填写。 {a('price_method')}</td></tr>
+<tr><td>上海</td><td><b>人民广场/南京东路</b></td><td>8/25经典线、8/26去虹桥都方便；比住浦东机场附近更适合唯一完整上海下午。 {a('decision')}</td><td>全部方案相同</td><td><b>必须订8/24+8/25两晚</b>，8/25凌晨到店；备注晚到。 {a('input')}</td></tr>
+</tbody></table></div></div></details>
+
+<details class="section" open id="food"><summary>05｜每顿饭吃什么 + 四城美食/餐厅候选</summary><div class="inside"><div class="alert">餐饮是动态菜单价。这里只给“吃什么、在哪个区域吃、哪些餐厅可候选”，不写人均预估；真实账单回填成本台账。 {a('price_method')}</div><div class="table-wrap"><table><thead><tr><th>日期/城市</th><th>餐次</th><th>建议吃什么</th><th>执行地点/餐厅策略</th></tr></thead><tbody>{''.join(meal_trs)}</tbody></table></div><h3>餐厅候选（不要求全部去）</h3>{''.join(restaurant_html)}<p class="note">餐厅是否营业、具体门店和排队情况，以出行当天地图/门店小程序为准；政府餐饮指南用于支持菜系与候选名单，地图链接用于查当前门店位置。</p></div></details>
+
+<details class="section" id="transport"><summary>06｜大交通 / 小交通 / 不走回头路原则</summary><div class="inside"><h3>大交通</h3><ul><li>四段航班已锁定，不参与方案比较。 {a('input')}</li><li>青岛→威海：方案A/B/C/E优先铁路；12306预售期15天，8/22票8/8进入预售窗、8/23票8/9进入预售窗，具体起售时刻查12306。 {a('rail_presale')}</li><li>不使用长途大巴作为默认替代；余票不足先候补。 {a('input')}</li></ul><h3>上海双机场</h3><p>8/26三人先去虹桥T2，爸妈18:20起飞后，女友直接乘上海市域机场线去浦东。官方全程票价<b>26元</b>，两机场约40分钟通达；2026年4月运行图仍为常态化运营。 {a('airportline_fare')} {a('airportline_time')}</p><h3>不走回头路</h3><p>主推A把“威海租车”放到8/24并在机场还车，就是为了退房后行李随车、东向海岸游完直接机场；如果具体订单异店还车/保障价格不划算，退回方案B的市区海岸+打车。 {a('decision')}</p></div></details>
+
+<details class="section" open id="rental"><summary>07｜租车对比：一嗨 / 神州 / 哈啰 + 秦级空间 + 油电/DM-i</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>平台</th><th>平台本质</th><th>异地/异店还车</th><th>这次怎么比</th></tr></thead><tbody>
