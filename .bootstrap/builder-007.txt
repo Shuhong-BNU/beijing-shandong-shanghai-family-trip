@@ -1,0 +1,42 @@
+iv class="table-wrap"><table><thead><tr><th>平台</th><th>模式</th><th>本次怎么看异地/跨门店</th><th>怎么比才公平</th><th>来源</th></tr></thead><tbody>
+<tr><td><b>一嗨</b></td><td>全国租车直营/标准化服务</td><td>不能写“全国免费异地还车”；官方是按取还城市/门店、距离由系统生成，部分同城异门店可免，最终订单为准。</td><td>固定威海市区8/24早取、威海机场晚还、同车型、同保障后看最终支付额。</td><td>{a('ehi','↗ 一嗨规则')}</td></tr>
+<tr><td><b>神州</b></td><td>全国直营网点体系</td><td>跨网点/异地还车属于可能产生的附加项目，必须看本次订单明细。</td><td>与一嗨完全同时间/车型/保障；不要只比“日租金”。</td><td>{a('shenzhou','↗ 神州官网')}</td></tr>
+<tr><td><b>哈啰</b></td><td>聚合租车平台</td><td>供应商/车况/异地取还规则依实际商家；官方明确提供送车和异地取还能力。</td><td>把供应商评分、车龄、押金/保障、送取车费一起看。</td><td>{a('hello','↗ 哈啰官方')}</td></tr>
+</tbody></table></div><h3>统一比价参数</h3><ul><li>方案A：8/24早上威海市区取车 → 8/24晚威海大水泊机场还车。</li><li>车型：秦PLUS DM-i/同级紧凑轿车；4人且大箱多时另对比紧凑SUV。</li><li>保障：同等免赔/基础保障；总价=租金+强制服务+保障+异地/跨店+送取车+能源/停车/高速。</li><li>任何一项未显示，就不能宣布“谁最便宜”。 {a('price_method')}</li></ul><h3>秦PLUS类空间</h3><p>2026款秦PLUS公开参数约4780mm车长、2718mm轴距、后备厢约450L。3人+2个24寸箱+1个登机箱通常合适；3个24寸建议现场试装；4人+4个中大型箱不建议赌紧凑轿车，直接把SUV纳入同参数比价。 {a('qinplus','↗ 车型数据')}</p><h3>纯电 / 油车 / DM-i</h3><div class="grid3"><div class="card"><h4>纯电</h4><p>能源成本可能最低，但还车电量/充电服务可能增加变量。一嗨当前规则按电量差额计费，并对部分低电量情形设置充电服务费。 {a('ehi_rules')}</p></div><div class="card"><h4>油车</h4><p>执行最直观：按平台油量规则还车。总成本不能只看油耗，还要看本次租金和保障。 {a('ehi')}</p></div><div class="card"><h4>DM-i / 插混</h4><p>若租价接近，本次最平衡：不依赖充电站；一嗨现行规则对混动/插混/增程还车只判断油量，不判断电量。 {a('ehi_rules')}</p></div></div></div></details>
+
+<details class="section" open id="booking"><summary>08｜抢票/预约门票清单（按日期执行）</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>什么时候做</th><th>项目</th><th>渠道</th><th>规则/策略</th><th>优先级</th></tr></thead><tbody>{''.join(book_trs)}</tbody></table></div><p class="note">“建议提前买”与“官方固定放票点”严格区分；没有官方证据时不虚构一个20:00放票时间。</p></div></details>
+
+<details class="section" open id="costs"><summary>09｜五方案总成本对比：用真实支付额算，不用估算</summary><div class="inside"><div class="card cost-shell"><h3>精确成本计算器</h3><p>为了同时满足“要五方案总数”和“不要预估”，这里采用<b>缺一项就不显示伪总数</b>的方式：先填共同真实订单，再填各方案差异；官方固定票务自动计算。数据只保存在当前浏览器 localStorage。</p><div class="cost-controls"><label>普通成人数量<input id="adultCount" type="number" min="0" max="4" value="3"></label><label>60岁及以上人数<input id="seniorCount" type="number" min="0" max="4" value="0"></label><label>同行总人数（自动）<input id="partyCount" type="number" value="3" readonly></label></div><h4>共同真实支出</h4><div class="input-grid">{shared_inputs}</div><div class="note">刘公岛：成人122、60+31；豫园7–8月成人30、60+按半价15。 {a('liugong')} {a('yuyuan')}</div></div>{''.join(plan_cost_cards)}<div class="table-wrap"><table><thead><tr><th>方案</th><th>当前固定票务精确小计</th><th>最终总成本</th><th>成本结构主差异</th></tr></thead><tbody>{''.join(f'<tr><td><b>{pid}</b></td><td id="table-fixed-{pid}">—</td><td id="table-total-{pid}">待录入</td><td>{plans[pid]["cost_note"]}</td></tr>' for pid in plans)}</tbody></table></div><div id="cost-method" class="alert"><b>为什么现在不直接给“总共¥xxxxx”？</b>因为用户没有提供已购机票金额、酒店最终支付、真实租车结算、网约车账单和菜单账单；给一个完整数字只能靠估算，和硬约束冲突。这个计算器的设计目标是：一旦订单/账单产生，就能得到真正的五方案总数。 {a('price_method')}</div></div></details>
+
+<details class="section" id="cuts"><summary>10｜景点删减：不是“不好”，而是本次不值</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>城市</th><th>删/降级项目</th><th>原因</th></tr></thead><tbody>{cut_tr}</tbody></table></div></div></details>
+
+<details class="section" id="modules"><summary>11｜模块化方案：按天气/体力/兴趣替换</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>模块</th><th>路线</th><th>什么时候用</th><th>地图定位</th></tr></thead><tbody>{mod_tr}</tbody></table></div><div class="grid2"><div class="card"><h4>高温版</h4><p>上午户外、13:00–16:00回酒店/室内、17:00后再看海岸或外滩。北京不追加项目，青岛把海军/青啤放中午，上海切东馆。 {a('bj_weather')} {a('shmuseum_2026')}</p></div><div class="card"><h4>雨天/大风版</h4><p>刘公岛若受船班影响则把市区海岸前置并等待官方通知；青岛优先博物馆，上海优先上博东馆；8/24威海自驾直接缩短到市区，不为成山头硬赶。 {a('wh_weather')}</p></div></div></div></details>
+
+<details class="section" open id="core-discussions"><summary>12｜核心讨论：这趟旅行真正要决定什么</summary><div class="inside">{core_html}</div></details>
+
+<details class="section" id="method"><summary>13｜事实冲突裁决 + 研究方法</summary><div class="inside"><h3>已裁掉的旧错误</h3><ul><li><b>刘公岛77元：</b>废弃；采用2026-04威海官方常规成人122、60+31。 {a('liugong')}</li><li><b>天安门只能提前1–7日：</b>废弃；2026-06北京最新为提前1–9日、可约未来10日。 {a('tiananmen')}</li><li><b>一嗨全国免异地费：</b>废弃；最终以具体取还组合订单生成。 {a('ehi')}</li><li><b>青岛→威海93/107元提前写死：</b>废弃；到12306预售窗读取真实车次票价。 {a('rail')}</li><li><b>上海虹桥→浦东首选地铁2号线：</b>废弃；改市域机场线26元。 {a('airportline_fare')}</li><li><b>上博人民广场馆“免费预约即可”：</b>2026当前特展票务环境已变化；雨天优先东馆。 {a('shmuseum_2026')}</li></ul><h3>选择冲突不消灭</h3><p>“青岛2晚+威海2晚”与“青岛3晚+威海1晚”都是偏好方案，不属于事实对错，因此分别成为A/B/D/E与C。 {a('decision')}</p><h3>来源等级</h3><ol><li>政府/景区/学校/铁路/平台官方规则优先。</li><li>官方页面没有结算价时，不用OTA“低至价”代替。</li><li>人民大会堂等暂未找到稳定第一方网页的内容，明确标“次级来源、以官方小程序为准”。</li><li>“优先级/商业化/是否值得”是本项目规划判断，链接回核心讨论，不伪装成官方结论。</li></ol></div></details>
+
+<details class="section" open id="versions"><summary>14｜版本与时间戳管理</summary><div class="inside"><div class="version-grid"><div class="ver-card"><b>v1.1.0</b><br>{ts}<br><span class="muted">扩充景点池、45张地图、抢票清单、逐餐、精确成本计算器、折叠完整研究。</span></div><div class="ver-card"><b>v1.0.0</b><br>2026-08-07 22:44 (UTC+8)<br><span class="muted">首次事实去重/冲突裁决、五方案骨架、基础完整研究。</span></div></div><p>根目录永远跳转最新版；旧版本目录永久保留，避免覆盖历史版本。版本与时间戳同时写入 README、version.json、页面头部和 CHANGELOG。 {a('yunnan_repo','↗ 工程参考')}</p></div></details>
+
+<details class="section" id="sources"><summary>15｜来源总表（页面事实已就地挂链接）</summary><div class="inside"><div class="table-wrap"><table><thead><tr><th>键</th><th>网址</th></tr></thead><tbody>{source_tr}</tbody></table></div></div></details>
+
+</section>
+<footer>北京—山东—上海家庭旅行计划 · v1.1.0 · {ts}<br>地图 © OpenStreetMap contributors；规划线仅用于空间关系。所有动态价格以真实订单/账单为准。</footer></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+window.MAPDATA={json.dumps(mapdata,ensure_ascii=False)};
+window.LOCS={json.dumps(L,ensure_ascii=False)};
+const modeStyle={{flight:{{color:'#6d4bc3',dashArray:'8 8'}},rail:{{color:'#205f91'}},drive:{{color:'#b42318'}},taxi:{{color:'#a45a00',dashArray:'5 5'}},metro:{{color:'#247f83'}},walk:{{color:'#666',dashArray:'2 7'}},ferry:{{color:'#2e86ab',dashArray:'10 5'}},airportline:{{color:'#177245'}}}};
+const modeText={json.dumps(MODE_LABEL,ensure_ascii=False)};
+function initMap(el){{
+ if(el.dataset.ready==='1'||!window.L)return; const key=el.dataset.mapkey,d=window.MAPDATA[key]; if(!d)return;
+ el.innerHTML=''; const map=L.map(el,{{scrollWheelZoom:false,attributionControl:true}}); el._map=map;
+ L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png',{{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}}).addTo(map);
+ const latlngs=[];
+ d.nodes.forEach((n,i)=>{{const loc=window.LOCS[n[0]];if(!loc)return; const ll=[loc[1],loc[2]];latlngs.push(ll); L.marker(ll).addTo(map).bindPopup(`<b>${{i+1}}. ${{loc[0]}}</b><br>${{n[1]}}<br>${{n[2]}}`);}});
+ for(let i=0;i<latlngs.length-1;i++){{let mode=d.modes[i]||'taxi';let st=modeStyle[mode]||{{color:'#555'}};let line=L.polyline([latlngs[i],latlngs[i+1]],{{weight:4,opacity:.78,...st}}).addTo(map).bindTooltip(modeText[mode]||mode); if(L.polylineDecorator){{L.polylineDecorator(line,{{patterns:[{{offset:'55%',repeat:0,symbol:L.Symbol.arrowHead({{pixelSize:8,polygon:false,pathOptions:{{color:st.color||'#555',weight:2}}}})}}]}}).addTo(map);}}}}
+ if(latlngs.length) map.fitBounds(L.latLngBounds(latlngs).pad(.18),{{maxZoom:13}}); el.dataset.ready='1';
+}}
+const obs=new IntersectionObserver(es=>es.forEach(e=>{{if(e.isIntersecting){{initMap(e.target);obs.unobserve(e.target);setTimeout(()=>e.target._map&&e.target._map.invalidateSize(),80);}}}}),{{rootMargin:'300px'}});document.querySelectorAll('.route-map').forEach(el=>obs.observe(el));
+document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{{if(d.open)setTimeout(()=>d.querySelectorAll('.route-map').forEach(initMap),60);}}));
+try{{mermaid.initialize({{startOnLoad:true,theme:'neutral'}});}}catch(e){{console.warn(e)}}
