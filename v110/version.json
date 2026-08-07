@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "content_frozen_at": "2026-08-07T23:22:46+08:00",
-  "repository_release_completed_at": "2026-08-08T01:03:26+08:00",
+  "feature_complete_at": "2026-08-08T01:07:07+08:00",
   "timezone": "UTC+8",
   "path": "v110/",
   "entry": "v110/index.html",
@@ -17,6 +17,7 @@
     "版本/时间戳对应管理",
     "修复方案A/B地图旧节点别名",
     "修复成人与60+人数联动计算",
+    "补齐残留景点事实外链",
     "移除临时bootstrap与废弃Actions发布链"
   ]
 }
