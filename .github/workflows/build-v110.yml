@@ -6,16 +6,24 @@ on:
     paths:
       - '.bootstrap/**'
       - '.github/workflows/build-v110.yml'
+  issues:
+    types: [opened]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: v110-static-release
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
