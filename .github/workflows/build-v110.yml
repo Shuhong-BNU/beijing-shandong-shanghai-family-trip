@@ -1,0 +1,68 @@
+name: Build v1.1.0 static release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/**'
+      - '.github/workflows/build-v110.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Restore bootstrap sources
+        shell: bash
+        run: |
+          mkdir -p scripts v100
+          cat .bootstrap/builder-*.txt > scripts/build_v110.py
+          cat .bootstrap/v100-*.txt > v100/index.html
+          cp .bootstrap/v100-version.json v100/version.json
+
+      - name: Build v1.1.0
+        run: TRIP_ROOT="$GITHUB_WORKSPACE" python scripts/build_v110.py
+
+      - name: Validate generated release
+        shell: bash
+        run: |
+          test -s v100/index.html
+          test -s v100/version.json
+          test -s v110/index.html
+          test -s v110/version.json
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('v110/index.html').read_text(encoding='utf-8')
+          assert s.count('class="route-map"') == 45, s.count('class="route-map"')
+          assert s.count('class="daydetail"') == 40, s.count('class="daydetail"')
+          assert s.count('class="plan-card') >= 5
+          assert 'v1.1.0' in s
+          assert '完整研究' in s
+          assert '抢票/预约门票清单' in s
+          assert '景点点评 + 优先级' in s
+          assert '精确成本计算器' in s
+          print('validation OK')
+          PY
+
+      - name: Commit generated static release
+        shell: bash
+        run: |
+          rm -rf .bootstrap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+            exit 0
+          fi
+          git commit -m "release: publish v1.1.0 static research site [skip ci]"
+          git push
