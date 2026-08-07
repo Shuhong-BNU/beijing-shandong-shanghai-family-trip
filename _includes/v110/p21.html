@@ -7,5 +7,25 @@ function saveInputs(){document.querySelectorAll('#costs input').forEach(el=>loca
 function loadInputs(){document.querySelectorAll('#costs input').forEach(el=>{let k='tripcost:'+(el.id||el.dataset.shared||el.dataset.plan+':'+el.dataset.field),v=localStorage.getItem(k);if(v!==null&&el.id!=='partyCount')el.value=v;})}
 function calcCosts(){travelerCounts();saveInputs();let sharedEls=[...document.querySelectorAll('[data-shared]')];for(const pid of Object.keys(PLANFIELDS)){let fixed=fixedTicket(pid),sum=fixed,missing=0;sharedEls.forEach(el=>{let v=getNum(el);if(v===null)missing++;else sum+=v;});document.querySelectorAll(`[data-plan="${pid}"]`).forEach(el=>{let v=getNum(el);if(v===null)missing++;else sum+=v;});let fixedText='¥'+fixed.toFixed(2);document.getElementById('fixed-'+pid).textContent=fixedText;document.getElementById('table-fixed-'+pid).textContent=fixedText;let total=document.getElementById('total-'+pid),miss=document.getElementById('missing-'+pid),tab=document.getElementById('table-total-'+pid);if(missing===0){let t='¥'+sum.toFixed(2);total.textContent=t;miss.textContent='已全部使用真实金额';tab.textContent=t;}else{total.textContent='—';miss.textContent=`待补齐 ${missing} 项真实金额；已知部分 ¥${sum.toFixed(2)}`;tab.textContent=`待补${missing}项`}}}
 loadInputs();travelerCounts();document.querySelectorAll('#costs input').forEach(el=>el.addEventListener('input',calcCosts));calcCosts();
+// Replace residual internal fact links with direct public sources.
+const FACT_SOURCES={
+ '长安街夜骑':'https://www.beijing.gov.cn/fuwu/bmfw/sy/jrts/202307/t20230709_3158361.html',
+ '悦海公园':'https://www.weihai.gov.cn/szdt/web/mapIndex/3?area=&mapClassificationId=&mapClassificationPid=42&name=',
+ '海源公园':'https://www.weihai.gov.cn/szdt/web/mapIndex/3?area=&mapClassificationId=&mapClassificationPid=42&name=',
+ '半月湾':'https://www.weihai.gov.cn/szdt/web/mapIndex/3?area=&mapClassificationId=&mapClassificationPid=26&name=',
+ '小石岛':'https://www.weihai.gov.cn/szdt/web/mapIndexNoHead',
+ '猫头山':'https://www.weihai.gov.cn/szdt/web/mapIndex/3?area=&mapClassificationId=&mapClassificationPid=26&name=',
+ '成山头':'https://www.weihai.gov.cn/art/2025/5/14/art_60616_5490307.html',
+ '鸡鸣岛':'https://www.weihai.gov.cn/art/2025/4/23/art_60616_5436447.html',
+ '神雕山野生动物世界':'https://www.weihai.gov.cn/art/2026/7/22/art_60616_6497446.html',
+ '城隍庙商业区':'https://english.shanghai.gov.cn/en-240-hourtransfer-stayinShanghai/20240104/d25575598d6444e49dc75f7a23b985d2.html',
+ '新天地':'https://english.shanghai.gov.cn/en-240-hourtransfer-stayinShanghai/20240104/d25575598d6444e49dc75f7a23b985d2.html',
+ '田子坊':'https://english.shanghai.gov.cn/en-240-hourtransfer-stayinShanghai/20240104/d25575598d6444e49dc75f7a23b985d2.html',
+ '北外滩':'https://www.shanghai.gov.cn/nw4411/20260622/e82e6322a4ab42dc8078db5c2a0b289a.html',
+ '朱家角':'https://www.shanghai.gov.cn/fygz/20260625/09beddb4cff345ba80b159c409cad101.html'
+};
+document.querySelectorAll('tr').forEach(tr=>{const first=tr.querySelector('td');if(!first)return;const name=first.textContent.trim();const url=FACT_SOURCES[name];if(!url)return;tr.querySelectorAll('a.src').forEach(a=>{if(a.textContent.includes('事实/位置来源')&&a.getAttribute('href')==='#core-discussions'){a.href=url;a.target='_blank';a.rel='noopener';}});});
+const NO_DRINK='https://www.mot.gov.cn/zhengcejiedu/tufashijianyjglgd/xiangguanzhengce/201510/t20151015_1905369.html';
+document.querySelectorAll('#food tr').forEach(tr=>{if(/驾驶日不喝酒|驾驶者还车前不饮酒/.test(tr.textContent)){tr.querySelectorAll('a.src').forEach(a=>{if(a.textContent.includes('食物/规则来源')&&a.getAttribute('href')==='#core-discussions'){a.href=NO_DRINK;a.target='_blank';a.rel='noopener';}});}});
 // hash tab active
 function markTab(){const h=location.hash||'#quick';document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===h));}window.addEventListener('hashchange',markTab);markTab();
