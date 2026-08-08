@@ -25,8 +25,8 @@ jobs:
           AMAP_WEB_SERVICE_KEY: ${{ secrets.AMAP_WEB_SERVICE_KEY }}
         run: |
           set -euo pipefail
-          python3 scripts/freeze_amap_routes.py --test-only
-          python3 scripts/freeze_amap_routes.py
+          python3 scripts/freeze_amap_routes_v2.py --test-only
+          python3 scripts/freeze_amap_routes_v2.py
 
       - name: Print non-secret summary
         run: |
