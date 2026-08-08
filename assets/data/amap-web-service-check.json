@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "infocode": "10000",
+  "tested_service": "/v5/direction/driving",
+  "sample_route": "北京首都机场 → 北邮南门附近酒店",
+  "distance_m": 43111,
+  "duration_s": 4025,
+  "checked_at": "2026-08-08T06:23:46.238240+00:00"
+}
