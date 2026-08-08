@@ -1,11 +1,12 @@
-# 北京—山东—上海家庭旅行计划 · v1.3.1
+# 北京—山东—上海家庭旅行计划 · v1.3.2
 
 > 2026-08-19 至 2026-08-26｜北京 → 青岛 → 威海 → 上海｜家庭旅行规划、执行与研究手册
 
 🌐 **在线最新版**：https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/  
-📖 **v1.3.1 固定页面**：https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v131/#overview  
+📖 **v1.3.2 固定页面**：https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v132/#overview  
+🗃️ **v1.3.1 历史页面**：https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v131/#overview  
 🗃️ **v1.3.0 历史页面**：https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v130/#overview  
-🏷️ **当前版本**：v1.3.1
+🏷️ **当前版本**：v1.3.2
 
 ## 项目定位
 
@@ -29,17 +30,43 @@
 - **D｜山东跨城自驾**：青岛取车，经荣成 / 威海活动，威海机场还车。
 - **E｜慢节奏减负**：每天一个主项目 + 一个轻量散步或休息模块。
 
-## v1.3.1 重点优化
+## v1.3.2 重点优化
 
-### 1. 地图交互
+### 1. 地图节点名称改为真正的地理标签
 
-- 每天的高德地图增加独立折叠层，默认折叠；只有展开后才创建 AMap 实例和加载底图。
-- 节点默认显示 **图标 + 编号**。
-- 地图外提供 **“显示节点名称 / 隐藏节点名称”** 开关；打开后通过地图内浮层按编号列出所有节点，避免标签彼此遮挡。
-- 路线颜色从“按交通方式”改为 **按当天行程先后阶段** 区分，并显示 `1→2 / 2→3 / …` 阶段图例。
-- 60 个转场继续读取冻结 JSON，不因显示地图而重新算路。
+- 默认仍然只显示 **节点图标 + 编号**，保持地图干净。
+- 点击 **“显示节点名称”** 后，名称直接显示在对应 Marker 旁，而不是放在地图顶部单独列清单。
+- 标签与节点经纬度绑定；地图缩放和拖动时会跟随地理位置移动。
+- 在 `zoomchange / moveend / resize` 后重新计算标签偏移，优先在节点四周寻找无遮挡位置；密集节点会扩大候选半径，尽量避免名称互相遮挡。
+- 路线仍按当天执行先后阶段使用不同颜色，并保留 `1→2 / 2→3 / …` 阶段图例。
+- 每天地图继续默认折叠，只有展开后才创建 AMap 实例。
 
-### 2. 高德生产架构
+### 2. 逐餐真实图完整覆盖
+
+- 逐餐表的每一个餐次都固定一张真实代表图，不再取决于运行时 Wikimedia Commons 搜索是否成功。
+- 北京早餐、炸酱面、水饺/馄饨、韩餐、小笼、生煎、葱油拌面等使用确定的真实图片；没有单一代表菜的餐次使用固定真实中餐图。
+- 相似餐次允许复用同一张代表图；图片仅用于识别，不代表最终餐厅实际出品。
+- 图片使用懒加载与异步解码，单图加载失败会回退到固定真实中餐图，避免出现“真实图”空白单元格。
+
+## v1.3.1 延续能力
+
+- 高德地图通过公开 JS API Key + Cloudflare Worker `serviceHost` 工作，`securityJsCode` 只在 Worker Secret。
+- 天安门城楼在北京景点池提升为 A / 91，并在预订日历加入 8/13 17:00 抢 8/20 城楼票。
+- 北京代表图固定为正面天安门城楼照片。
+- 威海景点池补入乳山银滩、大乳山、东浦湾 / 逍遥湾、海驴岛、荣成天鹅湖。
+- 四城首屏代表图使用固定缩略图，其余 Commons 元数据有缓存、并发限制和懒加载。
+
+## 路线数据架构
+
+`AMAP_WEB_SERVICE_KEY` 只保存在 GitHub Actions Secret 中。A–E 五方案去重后的 60 个唯一转场已经冻结到：
+
+```text
+assets/data/route-metrics-v131.json
+```
+
+文件保存距离、预计时长、来源以及 GCJ-02 polyline。访客浏览页面时不会重新调用高德 Web Service 做路径规划。
+
+## 高德生产架构
 
 ```text
 GitHub Pages
@@ -54,41 +81,6 @@ Cloudflare Worker
 
 - `securityJsCode` 不写入公开仓库，也不发送给访客浏览器。
 - 路线 Web Service Key 继续只保存在 GitHub Actions Secret，用于路线变化时重新冻结。
-
-### 3. 天安门城楼
-
-- 北京景点池把 **天安门城楼** 提升为 A，作为“不进故宫时”的高辨识度轻量替代。
-- 预订日历明确增加 **8/13 17:00 抢 8/20 天安门城楼**。
-- 北京代表图片固定为真实的正面天安门城楼照片，不再由 `Tiananmen Beijing` 运行时搜索随机决定。
-
-### 4. 图片性能
-
-- 四城首屏代表图使用固定缩略图，减少运行时 Wikimedia API 搜索。
-- 其余 Commons 图片查询增加浏览器持久缓存；重复访问不再重复解析同一图片元数据。
-- 同时限制元数据请求并发，并缩小 IntersectionObserver 预加载范围，降低首屏网络突发请求。
-- 后续如继续优化，可将核心图片完全本地化到 GitHub Pages / Cloudflare R2，进一步减少境外热链依赖。
-
-### 5. 胶东自驾走廊景点池
-
-威海景点池新增：
-
-- 乳山银滩旅游度假区；
-- 大乳山滨海旅游度假区；
-- 东浦湾 / 逍遥湾；
-- 海驴岛；
-- 荣成天鹅湖。
-
-它们用于补齐青岛—威海—荣成自驾走廊，不代表主推方案全部去。
-
-## 路线数据架构
-
-`AMAP_WEB_SERVICE_KEY` 只保存在 GitHub Actions Secret 中。A–E 五方案去重后的 60 个唯一转场已经冻结到：
-
-```text
-assets/data/route-metrics-v131.json
-```
-
-文件保存距离、预计时长、来源以及 GCJ-02 polyline。访客浏览页面时不会重新调用高德 Web Service 做路径规划。
 
 ## 景点评分原则
 
@@ -108,23 +100,27 @@ assets/data/route-metrics-v131.json
 ```text
 .
 ├── index.html
-├── v131/                       # v1.3.1 当前版本入口
+├── v132/                       # v1.3.2 当前版本入口
+├── v131/                       # v1.3.1 历史版本入口
 ├── v130/                       # v1.3.0 历史版本入口
 ├── assets/data/
 │   └── route-metrics-v131.json
 ├── _includes/v130compact/
 ├── _includes/v130rest/
 ├── _includes/v130runtime/
-├── _includes/v131runtime/      # v1.3.1 增量覆盖层
+├── _includes/v131runtime/      # v1.3.1 增量层
+├── _includes/v132runtime/      # v1.3.2 增量层
 ├── .github/workflows/freeze-amap-routes.yml
 ├── CHANGELOG.md
 ├── DEPLOY.md
+├── VERSIONING.md
 └── version.json
 ```
 
 ## 版本
 
-- **v1.3.1**：高德地图折叠/延迟加载、节点名称开关、分阶段路线颜色、天安门城楼预订与代表图强化、图片请求优化、胶东自驾走廊景点池扩充。
+- **v1.3.2**：地图节点名称改为随地图缩放/拖动的地理标签并增加碰撞规避；逐餐真实图完整覆盖。
+- **v1.3.1**：地图折叠/延迟加载、分阶段路线颜色、天安门城楼强化、图片请求优化、胶东自驾走廊景点池扩充。
 - **v1.3.0**：高德内嵌日地图架构、60 段冻结路线、真实图片层。
 - **v1.2.2**：折叠式总流程、逐节点日期 / 城市。
 - **v1.2.1**：手机友好执行流程图、景点 100 分评分。
@@ -132,4 +128,4 @@ assets/data/route-metrics-v131.json
 - **v1.1.0**：完整研究、预约日历、逐餐与精确成本台账。
 - **v1.0.0**：五方案骨架与首轮事实冲突裁决基线。
 
-详细变化见 `CHANGELOG.md`。
+详细变化见 `CHANGELOG.md`；版本不可覆盖规则见 `VERSIONING.md`。
