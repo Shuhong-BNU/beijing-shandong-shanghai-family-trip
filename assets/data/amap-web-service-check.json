@@ -4,6 +4,6 @@
   "tested_service": "/v5/direction/driving",
   "sample_route": "北京首都机场 → 北邮南门附近酒店",
   "distance_m": 43111,
-  "duration_s": 4065,
-  "checked_at": "2026-08-08T06:29:18.351014+00:00"
+  "duration_s": 3982,
+  "checked_at": "2026-08-08T06:34:00.000453+00:00"
 }
