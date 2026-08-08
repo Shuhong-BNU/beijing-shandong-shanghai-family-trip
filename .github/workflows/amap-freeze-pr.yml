@@ -1,0 +1,56 @@
+name: AMap freeze probe
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/amap-freeze-trigger.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  freeze:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Verify secret and freeze routes
+        env:
+          AMAP_WEB_SERVICE_KEY: ${{ secrets.AMAP_WEB_SERVICE_KEY }}
+        run: |
+          set -euo pipefail
+          python3 scripts/freeze_amap_routes.py --test-only
+          python3 scripts/freeze_amap_routes.py
+
+      - name: Print non-secret summary
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          check=json.loads(Path('assets/data/amap-web-service-check.json').read_text())
+          data=json.loads(Path('assets/data/route-metrics-v131.json').read_text())
+          print('AMap test status:', check['status'])
+          print('Sample route:', check['sample_route'])
+          print('Sample distance_m:', check['distance_m'])
+          print('Sample duration_s:', check['duration_s'])
+          print('Summary:', data['summary'])
+          PY
+
+      - name: Commit frozen data to PR branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/data/amap-web-service-check.json assets/data/route-metrics-v131.json
+          if git diff --cached --quiet; then
+            echo 'No route-data changes.'
+          else
+            git commit -m 'data: freeze AMap route metrics for v1.3.1'
+            git push origin HEAD:${{ github.head_ref }}
+          fi
