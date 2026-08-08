@@ -1,54 +1,74 @@
-# GitHub Pages 部署说明 · v1.3.0
+# GitHub Pages 部署说明 · v1.3.1
 
-版本：v1.3.0  
-内容冻结：2026-08-08 11:38 (UTC+8)
+版本：v1.3.1  
+内容冻结：2026-08-08 16:11 (UTC+8)
 
 ## Pages 设置
 
 - Source：**Deploy from a branch**
 - Branch：**main**
 - Directory：**/(root)**
-- 不要添加 `.nojekyll`：v1.3.0 继续依赖 Jekyll include。
+- 不要添加 `.nojekyll`：当前版本继续依赖 Jekyll include。
 
 ## 当前发布结构
 
-- 根目录 `index.html`：跳转到 `./v130/#overview`。
-- `v130/index.html`：v1.3.0 Jekyll 页面入口。
-- `_includes/v130compact/`：页面头部、方案速览、执行壳、尾部。
-- `_includes/v130rest/`：完整研究正文分片。
-- `_includes/v130runtime/`：高德算路、内嵌地图、真实图片、评分、成本与界面逻辑。
-- `v122/`、`v121/`、`v120/`、`v110/`、`v100/`：历史版本继续保留。
+- 根目录 `index.html`：跳转到 `./v131/#overview`。
+- `v131/index.html`：v1.3.1 当前页面入口。
+- `v130/index.html`：v1.3.0 历史入口，保留回滚能力。
+- `_includes/v130compact/`、`_includes/v130rest/`、`_includes/v130runtime/`：延续稳定基线。
+- `_includes/v131runtime/r06.js`：v1.3.1 增量优化层，不直接破坏 v1.3.0 入口。
+- `assets/data/route-metrics-v131.json`：60 个冻结转场的距离、时长和 polyline。
 
-## 高德配置
+## 高德生产配置
 
-v1.3.0 **不在仓库内写入 Key**。页面“执行行程 → 高德内嵌地图设置”允许用户在当前浏览器录入：
+### Web端（JS API）
 
-1. 高德 Web 端 JS API Key；
-2. `securityJsCode`；
-3. 可选 Web Service Key（跨城铁路参考）；
-4. 本站每日未缓存算路上限。
+前端需要公开 JS API Key。这一 Key 会进入浏览器，因此它不是 Secret；必须在高德控制台限制到 `shuhong-bnu.github.io` 域名。
 
-配置保存在 localStorage。建议在高德控制台限制 `shuhong-bnu.github.io` 域名。
+安全密钥不再由访客填写。页面生产配置使用：
 
-本站上限与 30 天缓存用于降低意外调用，不代表高德官方账单硬上限。
+```text
+serviceHost = https://trip-amap-proxy.shuhong001.workers.dev/_AMapService
+```
 
-## v1.3.0 验收点
+### Cloudflare Worker
 
-- 根网址进入 `/v130/#overview`；
-- “方案速览 / 执行行程 / 完整研究”正常切换；
-- A–E 方案选择同步；
-- 方案总流程可折叠且只显示 8 天摘要；
-- 每天节点显示日期与所在城市；
-- 飞机段显示大圆距离与锁定航班时长；
-- 未配置高德 Key 时显示地图配置提示，但流程 / 表格不失效；
-- 配置有效高德 Key 后，陆地段能够返回实际路线公里数 / 预计时长并画在页面内；
-- 跨城日不会把全国尺度和市内路线强行挤在一张图中；
-- 景点总表 / 城市分表保留 100 分评分并增加真实图片列；
-- 美食表增加真实缩略图；
-- 图片失败时回退图标；
-- 抢票、成本、来源等原模块保留；
+Worker 保存：
+
+```text
+Secret name: AMAP_SECURITY_CODE
+```
+
+真实 `securityJsCode` 不写入 GitHub、不输出日志、不发送给访客浏览器。
+
+### Web Service 路线冻结
+
+GitHub Actions Secret：
+
+```text
+AMAP_WEB_SERVICE_KEY
+```
+
+只在路线变化且手动运行 `.github/workflows/freeze-amap-routes.yml` 时使用；日常访客打开网页不会实时重新算 60 段路线。
+
+## v1.3.1 验收点
+
+- 根网址进入 `/v131/#overview`；
+- `/v130/#overview` 仍可作为历史版访问；
+- 三套界面和底部四入口正常；
+- 高德底图无需访客手工输入 Key / securityJsCode 即可显示；
+- 每天的地图区域默认折叠，展开后才加载 AMap；
+- 节点默认显示图标 + 编号；“显示节点名称”按钮可在显示 / 隐藏间切换；
+- 名称浮层不应相互遮挡，并与地图编号一一对应；
+- 各段路线按当天先后阶段显示不同颜色，并有阶段色图例；
+- 冻结距离 / 时长继续可用，页面不重新请求 Web Service 路线规划；
+- 北京代表图为固定的真实天安门城楼正面图；
+- 图片元数据请求有持久缓存、并发限制和懒加载；
+- 北京景点池明确显示天安门城楼 A / 91；
+- 预订日历明确出现 `8/13 17:00 → 抢 8/20 天安门城楼`；
+- 威海景点池包含乳山银滩、大乳山、东浦湾 / 逍遥湾、海驴岛、荣成天鹅湖；
 - Pages build / deploy 成功。
 
 在线最新版：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/`
 
-固定入口：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v130/#overview`
+固定入口：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v131/#overview`
