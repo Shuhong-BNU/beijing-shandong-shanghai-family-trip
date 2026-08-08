@@ -1,0 +1,6 @@
+exclude:
+  - README.md
+  - CHANGELOG.md
+  - DECISIONS.md
+  - SOURCES.md
+  - DEPLOY.md
