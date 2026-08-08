@@ -43,7 +43,8 @@ function amapCfg(){
 
     cap: local.cap || 80
   };
-}function saveAmapCfg(){const c={jsKey:amapJsKey.value.trim(),security:amapSecurityCode.value.trim(),webKey:amapWebKey.value.trim(),cap:+amapLocalCap.value||80};localStorage.setItem('trip:amap-config-v130',JSON.stringify(c));updateAmapBadge();location.reload()}
+}
+function saveAmapCfg(){const c={jsKey:amapJsKey.value.trim(),security:amapSecurityCode.value.trim(),webKey:amapWebKey.value.trim(),cap:+amapLocalCap.value||80};localStorage.setItem('trip:amap-config-v130',JSON.stringify(c));updateAmapBadge();location.reload()}
 function clearAmapCfg(){localStorage.removeItem('trip:amap-config-v130');localStorage.removeItem('trip:amap-route-cache-v130');localStorage.removeItem('trip:amap-usage-v130');location.reload()}
 function updateAmapBadge(){const c=amapCfg(),b=document.getElementById('amapStatusBadge');if(!b)return;b.textContent=c.jsKey&&c.security?'已配置':'未配置';b.className='status-chip '+(c.jsKey&&c.security?'ok':'warn');const u=usage();document.getElementById('amapUsageText').textContent=`本站今日未缓存算路：${u.count}/${c.cap||80}；缓存30天。此上限只保护本站调用量，不是高德账单硬上限。`}
 function usage(){const today=new Date().toISOString().slice(0,10);let u={date:today,count:0};try{u=JSON.parse(localStorage.getItem('trip:amap-usage-v130')||'null')||u}catch{}if(u.date!==today)u={date:today,count:0};return u}
