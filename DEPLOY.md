@@ -1,42 +1,56 @@
-# GitHub Pages 部署说明
+# GitHub Pages 部署说明 · v1.2.0
 
-版本：v1.1.0  
-内容冻结：2026-08-07 23:22:46 (UTC+8)
-
-## 当前发布结构
-
-- 根目录 `index.html`：跳转到 `/v110/#full`。
-- `v110/index.html`：Jekyll 页面入口。
-- `_includes/v110/*.html`：v1.1.0 的静态片段；GitHub Pages 在构建阶段通过 Jekyll include 标签拼成一张连续 HTML。
-- `v110/version.json` / 根目录 `version.json`：版本与时间戳元数据。
+版本：v1.2.0  
+内容冻结：2026-08-08 09:14 (UTC+8)
 
 ## Pages 设置
 
-当前连接器不能直接修改仓库 Pages 设置，因此如果尚未开启，需要在 GitHub 网页端执行一次：
+- Source：**Deploy from a branch**
+- Branch：**main**
+- Directory：**/(root)**
+- 不要添加 `.nojekyll`：v1.2.0 与 v1.1.0 都依赖 Jekyll include。
 
-1. 打开仓库 **Settings → Pages**。
-2. `Build and deployment` 的 Source 选择 **Deploy from a branch**。
-3. Branch 选择 **main**，目录选择 **/(root)**，保存。
-4. 不要添加 `.nojekyll`：v1.1.0 依赖 Jekyll include 标签在构建阶段拼装页面。
-5. 发布后访问：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v110/#full`。
+## 当前发布结构
 
-## 为什么不是一个超大源文件
+- 根目录 `index.html`：跳转到 `./v120/#overview`。
+- `v120/index.html`：v1.2.0 Jekyll 页面入口。
+- `_includes/v120compact/*.html`：v1.2.0 构建分片。
+- `v110/`：保留为 v1.1.0 固定历史版本，也是 v1.2.0 浏览器端读取冻结路线数据与完整研究正文的同源基线。
+- `v100/`：v1.0.0 基线归档。
+- `v120/version.json` / 根目录 `version.json`：当前版本元数据。
 
-本次通过 ChatGPT GitHub 连接器写入仓库。为了避免 20+ 万字符单文件在连接器传输中被截断，v1.1.0 的源 HTML 按安全边界拆入 `_includes/v110/`；Jekyll 构建后浏览器收到的仍是同一张完整页面。
+## 为什么继续使用分片
 
-## 地图依赖
+通过 GitHub 连接器写入超大 HTML 时存在截断风险，因此 v1.2.0 继续使用 Jekyll include 在构建阶段拼装小分片。浏览器最终收到的是完整页面。
 
-页面运行时从 CDN 加载 Leaflet、Leaflet PolylineDecorator 和 Mermaid，并使用 OpenStreetMap 瓦片。地图线段用于表达空间关系、方向和交通方式，不替代当天实时导航。
+## 地图实现
+
+v1.2.0 默认路线图为纯前端 SVG：浏览器读取冻结的路线节点与经纬度数据后绘图，不请求 OpenStreetMap 在线瓦片，因此中国大陆网络下更稳定。
+
+SVG 路线图用于表达节点顺序、空间关系、移动方向与交通方式，不替代当天高德 / 百度实时导航。
+
+## v1.2.0 运行时关系
+
+`/v120/` 会通过同源请求读取 `/v110/`：
+
+1. 提取冻结的 `MAPDATA` 与 `LOCS`，生成当前所选方案的路线图；
+2. 提取 v1.1.0 的“完整研究”正文；
+3. 在浏览器端叠加 v1.2.0 的目录、票务、成本与景点池增强。
+
+这样可以保留 v1.1.0 已验收的大量研究内容，同时避免在 v1.2.0 再维护一份重复长文本。
 
 ## 验收点
 
 发布后应检查：
 
-- 根网址自动进入 `v110/#full`；
-- “五方案+地图”能看到 5 个方案总图；
-- 每个方案的 8 个日期都可展开并显示地图；
-- “完整研究”目录可折叠；
-- 景点点评按四城分类；
-- 抢票清单、逐餐建议、租车比较、成本计算器正常；
-- 外部来源链接可点击；
-- 成人/60+人数变化时，同行人数和固定票务同步更新。
+- 根网址进入 `/v120/#overview`；
+- “方案速览 / 执行行程 / 完整研究”能够独立切换；
+- A–E 方案选择可同步到执行行程；
+- 执行行程只显示当前方案；
+- 当前方案的 8 天路线图均可展开；
+- 不依赖 OSM 即可显示路线图；
+- “预订”可跳转到完整抢票清单；
+- 完整研究保留 v1.1.0 正文并显示 v1.2.0 增强内容；
+- 精确成本与预估参考分层展示。
+
+在线最新版：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/`
