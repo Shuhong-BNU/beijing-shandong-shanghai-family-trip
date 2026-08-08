@@ -64,7 +64,7 @@
 └── version.json            # 当前版本元数据
 ```
 
-当前 `v110/index.html` 使用 GitHub Pages / Jekyll 的 `{% include %}` 在构建期拼接 `_includes/v110/` 静态片段，避免超大单文件经连接器写入时被截断。最终输出仍是一张连续 HTML 页面。
+当前 `v110/index.html` 使用 GitHub Pages / Jekyll 的 include 标签在构建期拼接 `_includes/v110/` 静态片段，避免超大单文件经连接器写入时被截断。最终输出仍是一张连续 HTML 页面。
 
 ## 版本
 
