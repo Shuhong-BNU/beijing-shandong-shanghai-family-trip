@@ -6,6 +6,10 @@ D:{name:'方案 D｜山东跨城自驾：青岛→荣成→威海',nights:'北�
 E:{name:'方案 E｜慢节奏减负',nights:'北京1｜青岛2｜威海2｜上海2',fit:'怕热、膝盖一般、宁可少看',diff:'删远郊和高强度项目'}};
 const modeText={flight:'✈ 飞机',taxi:'🚕 打车',metro:'🚇 地铁',rail:'🚄 铁路',walk:'🚶 步行',drive:'🚗 自驾',ferry:'⛴ 轮渡',airportline:'🚆 机场线'};
 let MAPDATA={},LOCS={},selected=localStorage.getItem('trip:selectedPlan')||'A',AMAP_LOADING=null;
+const AMAP_PROD_CONFIG = {
+  jsKey: "95d9eb0382f5d7f05dac2a5e5adda547",
+  serviceHost: "https://trip-amap-proxy.shuhong001.workers.dev/_AMapService"
+};
 const FLIGHT_METRIC={
 'GanzhouAirport>PEK':{km:1591,time:'航班时长以订单为准；23:40抵达'},
 'PEK>PVG_QD':{km:513,time:'1小时25分'},
@@ -16,8 +20,30 @@ const FERRY_METRIC={'LiugongDock>Liugong':{km:5.6,time:'执行预留约30分（�
 function nodeCity(k){const bj=['PEK','BUPT','BNU','Tiananmen','Mao','Rostrum','Jingshan','Shichahai'],qd=['PVG_QD','QDHotel','Zhanqiao','Navy','OldCity','Signal','Badaguan','Wusi','Olympic','Beer','Laoshan','QDNorth'],wh=['WHStation','WHHotel','Xingfu','WHpark','LiugongDock','Liugong','Haiyuan','HalfMoon','Torch8','IntlBeach','Maotou','WHAirport'],rc=['Naxianghai','Chengshantou'],sh=['PVG','SHHotel','Yuyuan','Bund','Pearl','SHTower','Wukang','SHMuseumEast','Hongqiao'];if(k==='GanzhouAirport')return'赣州';if(k==='GuangzhouAirport')return'广州';if(bj.includes(k))return'北京';if(qd.includes(k))return'青岛';if(wh.includes(k))return'威海';if(rc.includes(k))return'荣成';if(sh.includes(k))return'上海';return'—'}
 function dayDate(d){const m=(d?.title||'').match(/^(\d+\/\d+)/);return m?m[1]:'—'}
 async function loadBaseline(){if(Object.keys(MAPDATA).length)return;const src=await fetch('../v110/').then(r=>{if(!r.ok)throw new Error('v110 '+r.status);return r.text()});const m0=src.indexOf('window.MAPDATA=')+'window.MAPDATA='.length,m1=src.indexOf(';\nwindow.LOCS=',m0),l0=m1+';\nwindow.LOCS='.length,l1=src.indexOf(';\nconst modeStyle=',l0);if(m1<0||l1<0)throw new Error('route data markers not found');MAPDATA=JSON.parse(src.slice(m0,m1));LOCS=JSON.parse(src.slice(l0,l1));LOCS.GuangzhouAirport=['广州白云机场',23.3924,113.2988]}
-function amapCfg(){try{return JSON.parse(localStorage.getItem('trip:amap-config-v130')||'{}')}catch{return{}}}
-function saveAmapCfg(){const c={jsKey:amapJsKey.value.trim(),security:amapSecurityCode.value.trim(),webKey:amapWebKey.value.trim(),cap:+amapLocalCap.value||80};localStorage.setItem('trip:amap-config-v130',JSON.stringify(c));updateAmapBadge();location.reload()}
+function amapCfg(){
+  let local = {};
+
+  try {
+    local = JSON.parse(
+      localStorage.getItem('trip:amap-config-v130') || '{}'
+    );
+  } catch {}
+
+  return {
+    jsKey: local.jsKey || AMAP_PROD_CONFIG.jsKey,
+    serviceHost:
+      local.serviceHost ||
+      AMAP_PROD_CONFIG.serviceHost,
+
+    // 正式生产环境不再把 securityJsCode 放浏览器
+    security: "",
+
+    // Web Service 已在构建阶段冻结，不给浏览器
+    webKey: "",
+
+    cap: local.cap || 80
+  };
+}function saveAmapCfg(){const c={jsKey:amapJsKey.value.trim(),security:amapSecurityCode.value.trim(),webKey:amapWebKey.value.trim(),cap:+amapLocalCap.value||80};localStorage.setItem('trip:amap-config-v130',JSON.stringify(c));updateAmapBadge();location.reload()}
 function clearAmapCfg(){localStorage.removeItem('trip:amap-config-v130');localStorage.removeItem('trip:amap-route-cache-v130');localStorage.removeItem('trip:amap-usage-v130');location.reload()}
 function updateAmapBadge(){const c=amapCfg(),b=document.getElementById('amapStatusBadge');if(!b)return;b.textContent=c.jsKey&&c.security?'已配置':'未配置';b.className='status-chip '+(c.jsKey&&c.security?'ok':'warn');const u=usage();document.getElementById('amapUsageText').textContent=`本站今日未缓存算路：${u.count}/${c.cap||80}；缓存30天。此上限只保护本站调用量，不是高德账单硬上限。`}
 function usage(){const today=new Date().toISOString().slice(0,10);let u={date:today,count:0};try{u=JSON.parse(localStorage.getItem('trip:amap-usage-v130')||'null')||u}catch{}if(u.date!==today)u={date:today,count:0};return u}
