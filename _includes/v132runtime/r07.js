@@ -16,9 +16,9 @@
 
   const style=document.createElement('style');
   style.textContent=`
-    .v132-node-label{display:flex;align-items:center;gap:5px;max-width:220px;padding:4px 7px;border-radius:8px;background:rgba(255,255,255,.96);border:1px solid rgba(91,62,166,.28);box-shadow:0 2px 9px rgba(0,0,0,.13);color:#292331;font-weight:800;line-height:1.25;white-space:nowrap;pointer-events:none;transition:font-size .12s ease}
+    .v132-node-label{display:flex;align-items:center;gap:5px;max-width:220px;padding:4px 7px;border-radius:8px;background:rgba(255,255,255,.96);border:1px solid rgba(91,62,166,.28);box-shadow:0 2px 9px rgba(0,0,0,.13);color:#292331;font-weight:800;line-height:1.25;white-space:normal;pointer-events:none;transition:font-size .12s ease}
     .v132-node-label .n{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;border-radius:999px;background:#5b3ea6;color:#fff;font-size:10px}
-    .v132-node-label .name{overflow:hidden;text-overflow:ellipsis}
+    .v132-node-label .name{overflow:visible;text-overflow:clip;white-space:normal;word-break:break-word}
     .v132-map-help{font-size:11px;color:var(--sub);margin-top:5px}
     .food-static-photo{width:104px;min-width:104px}
     .food-static-photo img{display:block;width:96px;height:66px;object-fit:cover;border-radius:9px;background:#eee;border:1px solid var(--line)}
@@ -28,6 +28,7 @@
   `;
   document.head.appendChild(style);
 
+  // --- Every meal gets a deterministic real photo (no runtime Commons API dependency). ---
   const FOOD_PHOTOS={
     breakfast:{thumb:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Baozi.JPG/330px-Baozi.JPG',url:'https://commons.wikimedia.org/wiki/File:Baozi.JPG',credit:'Baozi',license:'Commons'},
     zhajiang:{thumb:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Zhajiangmia.jpg/330px-Zhajiangmia.jpg',url:'https://commons.wikimedia.org/wiki/File:Zhajiangmia.jpg',credit:'Zhajiangmian',license:'Public domain'},
@@ -71,6 +72,7 @@
     if(!sec.querySelector('.food-photo-complete-note'))sec.querySelector('.inside')?.insertAdjacentHTML('afterbegin','<div class="food-photo-complete-note"><b>v1.3.2：</b>逐餐表每一餐都固定一张真实代表图；不再依赖运行时搜索成功与否。相同类型餐次允许复用同一张代表图，图片用于识别，不代表最终餐厅实物。</div>');
   };
 
+  // --- Map labels: geographic anchors + collision-aware pixel offsets recalculated on zoom/pan. ---
   function buildLegend(nodes,d){
     const parts=[];for(let i=0;i<nodes.length-1;i++){const a=nodes[i][0],b=nodes[i+1][0],idx=dayEdgeIndex(d,a,b),mode=dayEdgeMode(d,a,b),color=STAGE_COLORS[idx%STAGE_COLORS.length];parts.push(`<span class="stage-chip"><i class="stage-dot" style="background:${color}"></i>${idx+1}→${idx+2} ${(modeText?.[mode]||mode).replace(/^\S+\s?/,'')}</span>`)}return parts.join('')
   }
@@ -96,8 +98,9 @@
     const cw=canvas.clientWidth,ch=canvas.clientHeight,zoom=Number(map.getZoom?.()||11),font=Math.max(10,Math.min(13,10+(zoom-8)*.55)),used=[];
     items.forEach(item=>{
       item.el.style.fontSize=font+'px';
-      const width=Math.min(cw<620?150:220,Math.max(92,42+item.name.length*font*.9)),height=29;
-      item.el.style.maxWidth=width+'px';
+      const width=Math.min(cw<620?150:220,Math.max(100,48+Math.min(item.name.length,14)*font*.88));
+      const charsPerLine=Math.max(6,Math.floor((width-48)/(font*.95))),lines=Math.max(1,Math.ceil(item.name.length/charsPerLine)),height=Math.max(29,12+lines*font*1.35);
+      item.el.style.width=width+'px';item.el.style.maxWidth=width+'px';
       const p=map.lngLatToContainer(item.lnglat),cands=labelCandidates(width,height);let chosen=null,best=null,bestScore=Infinity;
       for(const [dx,dy] of cands){
         const rect={l:p.x+dx,t:p.y+dy,r:p.x+dx+width,b:p.y+dy+height};
