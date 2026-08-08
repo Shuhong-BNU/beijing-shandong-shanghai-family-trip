@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-08T06:23:46.238537+00:00",
+  "generated_at": "2026-08-08T06:29:18.382431+00:00",
   "coordinate_input": "WGS84",
   "amap_request_coordinate": "GCJ-02",
   "generator": "scripts/freeze_amap_routes.py",
@@ -30,7 +30,7 @@
     },
     "PEK>BUPT:taxi": {
       "distance_m": 43111,
-      "duration_s": 4025,
+      "duration_s": 4065,
       "polyline_gcj02": [
         [
           116.622998,
@@ -2041,7 +2041,7 @@
     },
     "BUPT>BNU:taxi": {
       "distance_m": 2202,
-      "duration_s": 487,
+      "duration_s": 479,
       "polyline_gcj02": [
         [
           116.360345,
@@ -2256,7 +2256,7 @@
     },
     "BNU>Tiananmen:taxi": {
       "distance_m": 9222,
-      "duration_s": 3286,
+      "duration_s": 3486,
       "polyline_gcj02": [
         [
           116.371519,
@@ -3183,7 +3183,7 @@
     },
     "Tiananmen>BUPT:taxi": {
       "distance_m": 11452,
-      "duration_s": 1665,
+      "duration_s": 1696,
       "polyline_gcj02": [
         [
           116.403373,
@@ -4030,7 +4030,7 @@
     },
     "BUPT>PEK:taxi": {
       "distance_m": 41096,
-      "duration_s": 3589,
+      "duration_s": 3595,
       "polyline_gcj02": [
         [
           116.360345,
@@ -6020,7 +6020,7 @@
     },
     "PVG_QD>QDHotel:taxi": {
       "distance_m": 57719,
-      "duration_s": 3703,
+      "duration_s": 3553,
       "polyline_gcj02": [
         [
           120.093853,
@@ -8435,7 +8435,7 @@
     },
     "QDHotel>Navy:taxi": {
       "distance_m": 6379,
-      "duration_s": 1906,
+      "duration_s": 2025,
       "polyline_gcj02": [
         [
           120.388195,
@@ -9408,7 +9408,7 @@
     },
     "OldCity>QDHotel:taxi": {
       "distance_m": 8027,
-      "duration_s": 1564,
+      "duration_s": 1468,
       "polyline_gcj02": [
         [
           120.324369,
@@ -10087,7 +10087,7 @@
     },
     "QDHotel>Badaguan:taxi": {
       "distance_m": 4545,
-      "duration_s": 1027,
+      "duration_s": 1004,
       "polyline_gcj02": [
         [
           120.388195,
@@ -10590,7 +10590,7 @@
     },
     "Badaguan>Wusi:taxi": {
       "distance_m": 3857,
-      "duration_s": 772,
+      "duration_s": 809,
       "polyline_gcj02": [
         [
           120.35912,
@@ -11332,7 +11332,7 @@
     },
     "Olympic>QDHotel:taxi": {
       "distance_m": 1943,
-      "duration_s": 835,
+      "duration_s": 830,
       "polyline_gcj02": [
         [
           120.396283,
@@ -11590,18 +11590,18 @@
       "to": "QDNorth",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "QDNorth>WHStation:rail": {
       "from": "QDNorth",
       "to": "WHStation",
       "mode": "rail",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "WHStation>WHHotel:taxi": {
       "distance_m": 8525,
-      "duration_s": 1247,
+      "duration_s": 1230,
       "polyline_gcj02": [
         [
           122.14705,
@@ -13058,7 +13058,7 @@
     },
     "WHpark>WHHotel:taxi": {
       "distance_m": 2807,
-      "duration_s": 652,
+      "duration_s": 660,
       "polyline_gcj02": [
         [
           122.141037,
@@ -13601,7 +13601,7 @@
     },
     "WHHotel>Haiyuan:taxi": {
       "distance_m": 4776,
-      "duration_s": 1531,
+      "duration_s": 1484,
       "polyline_gcj02": [
         [
           122.126341,
@@ -15099,7 +15099,7 @@
     },
     "HalfMoon>WHHotel:taxi": {
       "distance_m": 6697,
-      "duration_s": 1161,
+      "duration_s": 1242,
       "polyline_gcj02": [
         [
           122.134118,
@@ -15938,7 +15938,7 @@
     },
     "WHHotel>Torch8:drive": {
       "distance_m": 7846,
-      "duration_s": 1410,
+      "duration_s": 1419,
       "polyline_gcj02": [
         [
           122.126341,
@@ -16625,7 +16625,7 @@
     },
     "Torch8>Maotou:drive": {
       "distance_m": 6947,
-      "duration_s": 1213,
+      "duration_s": 1186,
       "polyline_gcj02": [
         [
           122.057316,
@@ -17364,7 +17364,7 @@
     },
     "Maotou>Naxianghai:drive": {
       "distance_m": 56779,
-      "duration_s": 4537,
+      "duration_s": 4437,
       "polyline_gcj02": [
         [
           122.099063,
@@ -20379,7 +20379,7 @@
     },
     "Naxianghai>WHAirport:drive": {
       "distance_m": 39552,
-      "duration_s": 2771,
+      "duration_s": 2839,
       "polyline_gcj02": [
         [
           122.473536,
@@ -21993,7 +21993,7 @@
     },
     "PVG>SHHotel:taxi": {
       "distance_m": 42859,
-      "duration_s": 3353,
+      "duration_s": 3311,
       "polyline_gcj02": [
         [
           121.809528,
@@ -24019,53 +24019,53 @@
       "to": "Yuyuan",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Yuyuan>Bund:metro": {
       "from": "Yuyuan",
       "to": "Bund",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Bund>Pearl:metro": {
       "from": "Bund",
       "to": "Pearl",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Pearl>SHHotel:metro": {
       "from": "Pearl",
       "to": "SHHotel",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "SHHotel>Wukang:metro": {
       "from": "SHHotel",
       "to": "Wukang",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Wukang>Hongqiao:metro": {
       "from": "Wukang",
       "to": "Hongqiao",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Hongqiao>PVG:airportline": {
       "from": "Hongqiao",
       "to": "PVG",
       "mode": "airportline",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "WHHotel>WHpark:taxi": {
       "distance_m": 4118,
-      "duration_s": 1051,
+      "duration_s": 1016,
       "polyline_gcj02": [
         [
           122.126341,
@@ -24504,7 +24504,7 @@
     },
     "WHpark>Haiyuan:taxi": {
       "distance_m": 7269,
-      "duration_s": 1861,
+      "duration_s": 1823,
       "polyline_gcj02": [
         [
           122.141037,
@@ -25407,7 +25407,7 @@
     },
     "WHHotel>WHAirport:taxi": {
       "distance_m": 45154,
-      "duration_s": 3437,
+      "duration_s": 3337,
       "polyline_gcj02": [
         [
           122.126341,
@@ -27769,18 +27769,18 @@
       "to": "Laoshan",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Laoshan>QDHotel:metro": {
       "from": "Laoshan",
       "to": "QDHotel",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "QDHotel>Laoshan:drive": {
       "distance_m": 29249,
-      "duration_s": 3458,
+      "duration_s": 3446,
       "polyline_gcj02": [
         [
           120.388195,
@@ -30547,7 +30547,7 @@
     },
     "Laoshan>Naxianghai:drive": {
       "distance_m": 282747,
-      "duration_s": 13423,
+      "duration_s": 13356,
       "polyline_gcj02": [
         [
           120.613097,
@@ -40994,7 +40994,7 @@
     },
     "Naxianghai>WHHotel:drive": {
       "distance_m": 49936,
-      "duration_s": 3703,
+      "duration_s": 3774,
       "polyline_gcj02": [
         [
           122.473536,
@@ -43569,7 +43569,7 @@
     },
     "WHHotel>Maotou:drive": {
       "distance_m": 8079,
-      "duration_s": 1362,
+      "duration_s": 1363,
       "polyline_gcj02": [
         [
           122.126341,
@@ -44160,7 +44160,7 @@
     },
     "Maotou>Chengshantou:drive": {
       "distance_m": 77484,
-      "duration_s": 6002,
+      "duration_s": 5834,
       "polyline_gcj02": [
         [
           122.099063,
@@ -48279,7 +48279,7 @@
     },
     "Chengshantou>WHAirport:drive": {
       "distance_m": 60249,
-      "duration_s": 4264,
+      "duration_s": 4278,
       "polyline_gcj02": [
         [
           122.707961,
@@ -51022,7 +51022,7 @@
     },
     "QDHotel>Zhanqiao:taxi": {
       "distance_m": 7605,
-      "duration_s": 2509,
+      "duration_s": 2424,
       "polyline_gcj02": [
         [
           120.388195,
@@ -51905,7 +51905,7 @@
     },
     "QDHotel>Wusi:taxi": {
       "distance_m": 296,
-      "duration_s": 87,
+      "duration_s": 81,
       "polyline_gcj02": [
         [
           120.388195,
@@ -52007,7 +52007,7 @@
     },
     "WHHotel>HalfMoon:taxi": {
       "distance_m": 5875,
-      "duration_s": 1276,
+      "duration_s": 1303,
       "polyline_gcj02": [
         [
           122.126341,
@@ -52574,7 +52574,7 @@
     },
     "Haiyuan>WHpark:taxi": {
       "distance_m": 7406,
-      "duration_s": 1642,
+      "duration_s": 1683,
       "polyline_gcj02": [
         [
           122.131052,
@@ -53468,14 +53468,14 @@
       "to": "Bund",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     },
     "Bund>SHHotel:metro": {
       "from": "Bund",
       "to": "SHHotel",
       "mode": "metro",
       "status": "error",
-      "error": "AMap 20001 MISSING_REQUIRED_PARAMS"
+      "error": "AMap 20000 INVALID_PARAMS"
     }
   },
   "summary": {
