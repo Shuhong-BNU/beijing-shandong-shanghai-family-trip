@@ -7,7 +7,7 @@
 
 - 根目录 `index.html`：跳转到 `/v110/#full`。
 - `v110/index.html`：Jekyll 页面入口。
-- `_includes/v110/*.html`：v1.1.0 的静态片段；GitHub Pages 在构建阶段拼成一张连续 HTML。
+- `_includes/v110/*.html`：v1.1.0 的静态片段；GitHub Pages 在构建阶段通过 Jekyll include 标签拼成一张连续 HTML。
 - `v110/version.json` / 根目录 `version.json`：版本与时间戳元数据。
 
 ## Pages 设置
@@ -17,7 +17,7 @@
 1. 打开仓库 **Settings → Pages**。
 2. `Build and deployment` 的 Source 选择 **Deploy from a branch**。
 3. Branch 选择 **main**，目录选择 **/(root)**，保存。
-4. 不要添加 `.nojekyll`：v1.1.0 依赖 Jekyll 的 `{% include %}` 在构建阶段拼装页面。
+4. 不要添加 `.nojekyll`：v1.1.0 依赖 Jekyll include 标签在构建阶段拼装页面。
 5. 发布后访问：`https://shuhong-bnu.github.io/beijing-shandong-shanghai-family-trip/v110/#full`。
 
 ## 为什么不是一个超大源文件
