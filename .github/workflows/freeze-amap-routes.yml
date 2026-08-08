@@ -2,12 +2,6 @@ name: Freeze AMap route metrics
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/freeze-amap-routes.yml'
-      - 'scripts/freeze_amap_routes.py'
-      - 'scripts/route_manifest_v131.json'
 
 permissions:
   contents: write
@@ -21,51 +15,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test and freeze AMap routes
-        id: freeze
-        continue-on-error: true
+      - name: Test key and freeze all route metrics
         env:
           AMAP_WEB_SERVICE_KEY: ${{ secrets.AMAP_WEB_SERVICE_KEY }}
         run: |
-          set +e
-          mkdir -p assets/data
-          python3 scripts/freeze_amap_routes.py > /tmp/amap-freeze.log 2>&1
-          code=$?
-          set -e
-          CODE="$code" python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          code=int(os.environ['CODE'])
-          log=Path('/tmp/amap-freeze.log').read_text(errors='replace')
-          # The freezer never prints the key. Keep only the final, non-secret diagnostic lines.
-          lines=[x for x in log.splitlines() if x.strip()][-40:]
-          Path('assets/data/amap-freeze-diagnostic.json').write_text(json.dumps({
-              'exit_code': code,
-              'status': 'success' if code == 0 else 'failed',
-              'log_tail': lines,
-          }, ensure_ascii=False, indent=2)+'\n')
-          PY
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          cat /tmp/amap-freeze.log
-          exit 0
+          set -euo pipefail
+          python3 scripts/freeze_amap_routes_v2.py --test-only
+          python3 scripts/freeze_amap_routes_v2.py
 
-      - name: Commit non-secret route data and diagnostic
+      - name: Show non-secret summary
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          check=json.loads(Path('assets/data/amap-web-service-check.json').read_text())
+          data=json.loads(Path('assets/data/route-metrics-v131.json').read_text())
+          print('AMap test:', check['status'])
+          print('Sample:', check['sample_route'], check['distance_m'], 'm', check['duration_s'], 's')
+          print('Freeze summary:', data['summary'])
+          PY
+
+      - name: Commit frozen non-secret data
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/data/amap-freeze-diagnostic.json
-          test -f assets/data/amap-web-service-check.json && git add assets/data/amap-web-service-check.json || true
-          test -f assets/data/route-metrics-v131.json && git add assets/data/route-metrics-v131.json || true
+          git add assets/data/amap-web-service-check.json assets/data/route-metrics-v131.json
           if git diff --cached --quiet; then
-            echo 'No diagnostic/data changes to commit.'
-          else
-            git commit -m 'data: persist AMap route freeze result'
-            git push
+            echo 'Frozen route data is unchanged.'
+            exit 0
           fi
-
-      - name: Fail workflow if freeze failed
-        if: steps.freeze.outputs.exit_code != '0'
-        run: |
-          echo 'AMap freeze failed. See committed assets/data/amap-freeze-diagnostic.json.'
-          exit 1
+          git commit -m 'data: refresh frozen AMap route metrics'
+          git push
