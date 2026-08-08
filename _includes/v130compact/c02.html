@@ -1,0 +1,20 @@
+<section id="quick" class="panel app-view" data-view="overview">
+<h2>方案速览</h2><div class="card selector-card"><h3>先选一个主方案，再看执行行程</h3><p class="note">这里先做判断：选定某个方案后，“执行行程”界面只显示该方案的总览、每天执行图与预订重点。默认选中 <b>方案 A</b>。</p><div class="plan-picker" id="overviewPlanPicker"><button type="button" class="plan-pick active" data-plan-pick="A">A 主推</button><button type="button" class="plan-pick" data-plan-pick="B">B 零驾驶</button><button type="button" class="plan-pick" data-plan-pick="C">C 青岛深度</button><button type="button" class="plan-pick" data-plan-pick="D">D 跨城自驾</button><button type="button" class="plan-pick" data-plan-pick="E">E 慢节奏</button></div><div class="inline-actions"><button type="button" class="jump-btn" id="goJourneyFromOverview">查看当前方案的执行行程 →</button></div></div>
+<div class="card best"><div class="kicker">当前主推</div><div class="big">A：青岛2晚 + 威海2晚 + 威海单日自驾</div><p>北京只做北师大 + 天安门；青岛市区不租车；8/22铁路转威海；8/23刘公岛；8/24再租一辆秦PLUS/同级车走威海海岸，机场还车；上海8/25经典慢游，8/26虹桥送爸妈后女友走市域机场线去浦东。<a class="src" href="#core-discussions">↗ 规划判断</a></p></div>
+<div class="grid2"><div class="card"><h3>四段航班已锁定</h3><ul><li>8/19 赣州→北京首都，23:40到。<a class="src" href="#requirements">↗ 规划判断</a></li><li>8/20 北京首都20:20→青岛胶东21:45。<a class="src" href="#requirements">↗ 规划判断</a></li><li>8/24 威海22:55→上海浦东，8/25 00:45到。<a class="src" href="#requirements">↗ 规划判断</a></li><li>8/26 父母虹桥18:20→赣州；女友浦东22:05→广州。<a class="src" href="#requirements">↗ 规划判断</a></li></ul></div><div class="card"><h3>这版最大的变化</h3><ul><li>景点池按北京/青岛/威海/上海扩到50+项，即使不去也点评。</li><li>五方案各有总地图，每个方案8天各有单独执行图。</li><li>新增抢票日历、逐餐建议、餐厅候选。</li><li>新增“真实订单成本台账”，避免假预算。</li><li>路线图改为手机友好的执行流程图；不依赖 OpenStreetMap，重点表达节点顺序、关键时间和交通接驳；若后续提供高德/百度 API Key 与域名白名单，可再增加在线底图作为增强层。</li><li>完整研究改为多层折叠目录，结构借鉴云南版但按固定航班重做。 <a class="src" href="https://shuhong-bnu.github.io/yunnan-family-trip/v1436/#full" target="_blank" rel="noopener">↗ 云南版参考</a></li></ul></div></div>
+<div class="card"><h3>宏观行程图</h3><div class="mermaid-wrap"><pre class="mermaid">flowchart LR
+G[8/19 赣州] -->|✈ 已订| B[北京
+1晚+1白天]
+B -->|8/20 20:20 ✈| Q[青岛
+2晚 / 方案C为3晚]
+Q -->|🚄 或 🚗| W[威海
+2晚 / 方案C为1晚]
+W -->|8/24 22:55 ✈| S[上海
+2晚]
+S --> H[8/26 虹桥
+爸妈→赣州]
+H -->|市域机场线 26元| P[浦东
+女友→广州]</pre></div></div>
+<div class="card"><h3>五方案一页比较</h3><div class="table-wrap"><table><thead><tr><th>方案</th><th>定位</th><th>城市晚数</th><th>适合谁</th><th>成本差异</th></tr></thead><tbody><tr><td><b>A</b></td><td>方案 A｜主推：青岛2晚 + 威海2晚 + 威海单日自驾</td><td>北京1晚｜青岛2晚｜威海2晚｜上海2晚</td><td>第一次带父母远游；想兼顾城市经典、历史和海岸，但不想连续驾驶。</td><td>山东段仅8/24产生租车；其余尽量铁路/打车。 <a class="src" href="#core-discussions">↗ 方案依据</a></td></tr><tr><td><b>B</b></td><td>方案 B｜零驾驶：青岛2晚 + 威海2晚</td><td>北京1晚｜青岛2晚｜威海2晚｜上海2晚</td><td>不想承担驾驶、停车、还车变量；接受放弃荣成远郊。</td><td>无租车；8/24以市区海岸+网约车去机场。 <a class="src" href="#core-discussions">↗ 方案依据</a></td></tr><tr><td><b>C</b></td><td>方案 C｜青岛深度：青岛3晚 + 威海1晚</td><td>北京1晚｜青岛3晚｜威海1晚｜上海2晚</td><td>明确把崂山列为高优先级，愿意压缩威海。</td><td>多一晚青岛、少一晚威海；8/22不转场。 <a class="src" href="#core-discussions">↗ 方案依据</a></td></tr><tr><td><b>D</b></td><td>方案 D｜山东跨城自驾：青岛→荣成→威海</td><td>北京1晚｜青岛2晚｜威海2晚｜上海2晚</td><td>驾驶经验充足，想把沿海移动本身当成体验，并减少搬运行李。</td><td>8/22起租车，8/24威海机场还；异地费只认订单。 <a class="src" href="#core-discussions">↗ 方案依据</a></td></tr><tr><td><b>E</b></td><td>方案 E｜慢节奏减负：每天一个主项目</td><td>北京1晚｜青岛2晚｜威海2晚｜上海2晚</td><td>父母怕热/膝盖一般/不希望每天暴走；宁可少看。</td><td>删掉崂山、成山头、远郊和高楼观景。 <a class="src" href="#core-discussions">↗ 方案依据</a></td></tr></tbody></table></div></div>
+<div class="card"><h3>价格纪律</h3><p><b>固定官方价写数字，动态商品不写“约”。</b>酒店、租车、网约车、餐饮、尚未开售的铁路、已购机票金额，都必须以真实支付页/账单补齐；因此下面的“总成本”做成可填写的精确台账，而不是虚构一个完整预算。<a class="src" href="#cost-method">↗ 方法</a></p></div>
+</section>
